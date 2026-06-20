@@ -408,7 +408,7 @@
 
         // --- Fungsi Ambil Data dari Google Spreadsheet ---
         async function loadDataFromSpreadsheet() {
-            if (SCRIPT_URL === 'https://script.google.com/macros/s/AKfycby0KFFxcxrsZh4dixG8euQFvbIAY86SB5OHABNnhkHNXoduMxudc-gObCy1D2Lfkz3b/exec') {
+            if (SCRIPT_URL === 'URL_WEB_APP_ANDA_DISINI') {
                 console.warn("URL Web App belum diisi. Menjalankan mode lokal.");
                 renderTable();
                 return;
@@ -618,7 +618,7 @@
             }
 
             // Jika SCRIPT_URL belum dimasukkan, jalankan penyimpanan LOKAL
-            if (SCRIPT_URL === 'https://script.google.com/macros/s/AKfycby0KFFxcxrsZh4dixG8euQFvbIAY86SB5OHABNnhkHNXoduMxudc-gObCy1D2Lfkz3b/exec') {
+            if (SCRIPT_URL === 'URL_WEB_APP_ANDA_DISINI') {
                 if (id) {
                     const index = students.findIndex(s => s.id == id);
                     students[index] = studentData;
