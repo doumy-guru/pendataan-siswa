@@ -696,14 +696,9 @@
                 didOpen: () => { Swal.showLoading(); }
             });
 
-            // Fallback untuk percobaan tanpa mengubah Backend
+            // Cegah login jika URL API belum diisi
             if (SCRIPT_URL === 'URL_WEB_APP_ANDA_DISINI') {
-                // Catatan: Ini berjalan jika user belum mengatur SCRIPT_URL
-                if (user === 'Kesiswaan' && pass === 'MKS@2026') {
-                    loginSuccess();
-                } else {
-                    Swal.fire({ icon: 'error', title: 'Akses Ditolak', text: 'Kredensial tidak valid!' });
-                }
+                Swal.fire({ icon: 'warning', title: 'Sistem Belum Siap', text: 'URL Web App (API) belum dikonfigurasi. Hubungi administrator.' });
                 return;
             }
 
@@ -723,14 +718,9 @@
                     Swal.fire({ icon: 'error', title: 'Akses Ditolak', text: 'Username atau password salah!' });
                 }
             } catch (error) {
-                // Jika request gagal (misalnya script GAS belum diperbarui) maka sistem akan fallback 
-                // hanya untuk demo. DI LINGKUNGAN NYATA, hapus blok ini.
-                if(user === 'Kesiswaan' && pass === 'MKS@2026') {
-                    console.warn("Backend login failed/not configured. Falling back to local check for demo.");
-                    loginSuccess();
-                } else {
-                    Swal.fire({ icon: 'error', title: 'Koneksi Gagal', text: 'Gagal terhubung ke server otentikasi.' });
-                }
+                // Hapus fallback lokal sepenuhnya, tampilkan error murni jika gagal koneksi
+                console.error("Login request failed:", error);
+                Swal.fire({ icon: 'error', title: 'Koneksi Gagal', text: 'Gagal terhubung ke server. Pastikan koneksi stabil atau URL API benar.' });
             }
         }
 
