@@ -423,7 +423,6 @@
                         </div>
                     </div>
 
-                    <!-- SEKSI 2 & 3 DISINGKAT DALAM KODE UNTUK MEMPERTAHANKAN STRUKTUR (Sama seperti aslinya, hanya diganti classnya) -->
                     <!-- SEKSI 2: PRESTASI -->
                     <div class="mb-8 p-5 glass rounded-2xl border border-white/70">
                         <h4 class="text-sm font-extrabold text-blue-700 uppercase tracking-widest border-b border-blue-200/50 pb-3 mb-5 flex items-center gap-2">
@@ -685,34 +684,76 @@
         }
 
         // --- LOGIN LOGIC ---
-        function handleLogin(e) {
+        async function handleLogin(e) {
             e.preventDefault();
             const user = document.getElementById('username').value;
             const pass = document.getElementById('password').value;
 
-            if(user === 'Kesiswaan' && pass === 'MKS@2026') {
-                document.getElementById('username').value = '';
-                document.getElementById('password').value = '';
-                
-                // Set sesi
-                localStorage.setItem('is_logged_in', 'true');
-                localStorage.setItem('last_active', Date.now().toString());
-                
-                Swal.fire({
-                    icon: 'success',
-                    title: 'Akses Diterima',
-                    text: 'Selamat datang di Sistem Pendataan Siswa Baru',
-                    timer: 1500,
-                    showConfirmButton: false,
-                    background: 'rgba(255, 255, 255, 0.9)',
-                    backdrop: 'rgba(0,0,0,0.4)'
-                }).then(() => {
-                    showScreen('dashboard-screen');
-                    loadDataFromSpreadsheet(); // Load data hanya setelah login berhasil
-                });
-            } else {
-                Swal.fire({ icon: 'error', title: 'Akses Ditolak', text: 'Kredensial tidak valid!' });
+            Swal.fire({
+                title: 'Otentikasi...',
+                text: 'Memeriksa kredensial ke server',
+                allowOutsideClick: false,
+                didOpen: () => { Swal.showLoading(); }
+            });
+
+            // Fallback untuk percobaan tanpa mengubah Backend
+            if (SCRIPT_URL === 'URL_WEB_APP_ANDA_DISINI') {
+                // Catatan: Ini berjalan jika user belum mengatur SCRIPT_URL
+                if (user === 'Kesiswaan' && pass === 'MKS@2026') {
+                    loginSuccess();
+                } else {
+                    Swal.fire({ icon: 'error', title: 'Akses Ditolak', text: 'Kredensial tidak valid!' });
+                }
+                return;
             }
+
+            try {
+                // Request otentikasi ke Google Apps Script (Backend)
+                const response = await fetch(SCRIPT_URL, {
+                    method: 'POST',
+                    body: JSON.stringify({ action: 'login', username: user, password: pass }),
+                    headers: { "Content-Type": "text/plain;charset=utf-8" }
+                });
+                
+                const data = await response.json();
+
+                if (data.status === 'success') {
+                    loginSuccess();
+                } else {
+                    Swal.fire({ icon: 'error', title: 'Akses Ditolak', text: 'Username atau password salah!' });
+                }
+            } catch (error) {
+                // Jika request gagal (misalnya script GAS belum diperbarui) maka sistem akan fallback 
+                // hanya untuk demo. DI LINGKUNGAN NYATA, hapus blok ini.
+                if(user === 'Kesiswaan' && pass === 'MKS@2026') {
+                    console.warn("Backend login failed/not configured. Falling back to local check for demo.");
+                    loginSuccess();
+                } else {
+                    Swal.fire({ icon: 'error', title: 'Koneksi Gagal', text: 'Gagal terhubung ke server otentikasi.' });
+                }
+            }
+        }
+
+        function loginSuccess() {
+            document.getElementById('username').value = '';
+            document.getElementById('password').value = '';
+            
+            // Set sesi
+            localStorage.setItem('is_logged_in', 'true');
+            localStorage.setItem('last_active', Date.now().toString());
+            
+            Swal.fire({
+                icon: 'success',
+                title: 'Akses Diterima',
+                text: 'Selamat datang di Sistem PPDB',
+                timer: 1500,
+                showConfirmButton: false,
+                background: 'rgba(255, 255, 255, 0.9)',
+                backdrop: 'rgba(0,0,0,0.4)'
+            }).then(() => {
+                showScreen('dashboard-screen');
+                loadDataFromSpreadsheet(); // Load data hanya setelah login berhasil
+            });
         }
 
         function confirmLogout() {
