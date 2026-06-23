@@ -713,7 +713,7 @@
                         <div class="col-span-2 md:col-span-4"><span class="block text-[9px] uppercase font-bold text-slate-400">Alamat Lengkap</span><span id="d_alamat" class="text-xs font-bold text-slate-700 dark:text-slate-300 break-words">-</span></div>
                         
                         <div><span class="block text-[9px] uppercase font-bold text-slate-400">Jarak Rumah</span><span id="d_jarak_rumah" class="text-xs font-bold text-slate-700 dark:text-slate-300">-</span></div>
-                        <div class="col-span-2"><span class="block text-[9px] uppercase font-bold text-slate-400">Sekolah Asal</span><span id="d_sekolah_lama" class="text-xs font-bold text-slate-700 dark:text-slate-300">-</span></div>
+                        <div class="col-span-2"><span class="block text-[9px] uppercase font-bold text-slate-700 dark:text-slate-300">-</span></div>
                         <div><span class="block text-[9px] uppercase font-bold text-slate-400">NPSN Asal</span><span id="d_npsn_sekolah_asal" class="text-xs font-bold text-slate-700 dark:text-slate-300">-</span></div>
                     </div>
                 </div>
@@ -755,8 +755,8 @@
                 </div>
             </div>
             
-            <!-- Modal Footer -->
-            <div class="p-5 bg-slate-50 dark:bg-slate-700 border-t border-slate-200 dark:border-slate-700 flex justify-end gap-3 shrink-0">
+            <!-- Modal Footer (Diberi ID agar terhindar dari bentrokan selector DOM) -->
+            <div id="detail-modal-footer" class="p-5 bg-slate-50 dark:bg-slate-700 border-t border-slate-200 dark:border-slate-700 flex justify-end gap-3 shrink-0">
                 <button type="button" onclick="closeDetailModal()" class="px-5 py-2.5 text-slate-600 dark:text-slate-300 bg-white dark:bg-slate-700 border border-slate-200 dark:border-slate-600 rounded-2xl font-bold transition-all text-xs shadow-sm">Tutup</button>
                 <button type="button" id="btn-edit-from-detail" class="px-5 py-2.5 bg-blue-600 hover:bg-blue-700 text-white rounded-2xl font-bold transition-all flex items-center gap-1.5 text-xs">
                     <i class="fas fa-edit"></i> Edit Data
@@ -797,7 +797,7 @@
                         <select id="uf_role" class="lovelace-input w-full px-4 py-2.5 text-xs bg-slate-50 dark:bg-slate-700 border border-transparent dark:border-slate-600 text-slate-700 dark:text-slate-300 outline-none appearance-none cursor-pointer focus:bg-white dark:focus:bg-slate-800 focus:border-blue-500">
                             <option value="Super Admin">Super Admin (Akses Penuh)</option>
                             <option value="Anggota Kesiswaan">Anggota Kesiswaan (Tambah & Edit)</option>
-                            <option value="Guru">Guru (Lihat Saja)</option>
+                            <option value="Guru">Guru (Lihat S Saja)</option>
                         </select>
                     </div>
                     <button type="submit" id="hidden-user-submit-btn" class="hidden"></button>
@@ -862,6 +862,74 @@
         function safeSetHtml(id, html) {
             const el = document.getElementById(id);
             if (el) el.innerHTML = html;
+        }
+
+        // --- FORMATTER TANGGAL SPREADSHEET OTOMATIS (YYYY-MM-DD) ---
+        function formatDateForInput(dateVal) {
+            if (!dateVal) return '';
+            
+            // Jika formatnya sudah YYYY-MM-DD
+            if (/^\d{4}-\d{2}-\d{2}$/.test(dateVal)) {
+                return dateVal;
+            }
+            
+            // Jika formatnya ISO timestamp (misal: "2008-11-25T17:00:00.000Z")
+            if (String(dateVal).includes('T')) {
+                return String(dateVal).split('T')[0];
+            }
+
+            // Jika formatnya tanggal dengan slash/garis miring (misal: "25/11/2008")
+            if (String(dateVal).includes('/')) {
+                const parts = String(dateVal).split('/');
+                if (parts.length === 3) {
+                    // Standardisasi DD/MM/YYYY ke YYYY-MM-DD
+                    if (parts[2].length === 4) {
+                        const day = parts[0].padStart(2, '0');
+                        const month = parts[1].padStart(2, '0');
+                        const year = parts[2];
+                        return `${year}-${month}-${day}`;
+                    }
+                }
+            }
+            
+            // Fallback parsing menggunakan objek Date bawaan browser
+            try {
+                const dateObj = new Date(dateVal);
+                if (!isNaN(dateObj.getTime())) {
+                    const year = dateObj.getFullYear();
+                    const month = String(dateObj.getMonth() + 1).padStart(2, '0');
+                    const day = String(dateObj.getDate()).padStart(2, '0');
+                    return `${year}-${month}-${day}`;
+                }
+            } catch (e) {
+                console.error("Gagal parse tanggal lahir:", dateVal, e);
+            }
+            
+            return '';
+        }
+
+        // --- FORMATTER DISPLAY TANGGAL INDONESIA (Contoh: 25 November 2008) ---
+        function formatDateIndonesian(dateVal) {
+            if (!dateVal) return '-';
+            const isoDate = formatDateForInput(dateVal);
+            if (!isoDate) return dateVal; // Kembalikan nilai mentah bila gagal parse
+            
+            const months = [
+                'Januari', 'Februari', 'Maret', 'April', 'Mei', 'Juni',
+                'Juli', 'Agustus', 'September', 'Oktober', 'November', 'Desember'
+            ];
+            
+            const parts = isoDate.split('-');
+            if (parts.length === 3) {
+                const year = parts[0];
+                const monthIndex = parseInt(parts[1], 10) - 1;
+                const day = parseInt(parts[2], 10);
+                
+                if (monthIndex >= 0 && monthIndex < 12) {
+                    return `${day} ${months[monthIndex]} ${year}`;
+                }
+            }
+            return isoDate;
         }
 
         function initTheme() {
@@ -1262,6 +1330,7 @@
             });
         }
 
+        // --- PENYINKRONAN DATA SPREADSHEET TANGGUH ---
         async function loadDataFromSpreadsheet() {
             if (SCRIPT_URL === 'URL_WEB_APP_ANDA_DISINI') return;
             try {
@@ -1443,7 +1512,14 @@
                 if (studentIdInput) studentIdInput.value = student.id;
                 fields.forEach(field => {
                     const inputEl = document.getElementById(`f_${field}`);
-                    if(inputEl) inputEl.value = student[field] || '';
+                    if(inputEl) {
+                        // Memastikan format tanggal lahir dirapikan otomatis ke standar HTML YYYY-MM-DD
+                        if (field === 'tanggal_lahir') {
+                            inputEl.value = formatDateForInput(student[field]);
+                        } else {
+                            inputEl.value = student[field] || '';
+                        }
+                    }
                 });
             } else {
                 if (modalTitle) modalTitle.textContent = `Tambah Siswa - Jalur ${currentPath}`;
@@ -1498,7 +1574,7 @@
                     if (id) students[students.findIndex(s => s.id == id)] = studentData;
                     else students.push(studentData);
                     localStorage.setItem('siswa_sman1_bna_v2', JSON.stringify(students));
-                    Swal.fire({ icon: 'success', title: 'Berhasil', timer: 1500, showConfirmButton: false });
+                    Swal.fire({ icon: 'success', title: 'Berhasil', text: 'Data siswa disimpan ke Spreadsheet!', timer: 1500, showConfirmButton: false });
                     closeFormModal(); updateDashboardCounts(); renderTable();
                 } else throw new Error("Server error");
             }).catch(error => {
@@ -1510,97 +1586,225 @@
             openFormModal(id); 
         }
 
-        // Cetak hasil pengumuman kelulusan PDF resmi dengan QR Code
         function generatePDF(student) {
             // Tampilkan loading indicator
             Swal.fire({
-                title: 'Menyiapkan Surat...',
-                text: 'Sedang membuat berkas PDF Resmi',
+                title: 'Menyiapkan Dokumen...',
+                text: 'Sedang memformat berkas cetak biodata formal',
                 allowOutsideClick: false,
                 didOpen: () => { Swal.showLoading(); }
             });
 
-            // Elemen cetak container dinamis
+            // Elemen cetak container dinamis dengan reset style formal (Latar putih, teks hitam tajam)
             const element = document.createElement('div');
-            element.className = 'p-10 text-slate-800 bg-white leading-relaxed text-sm';
-            element.style.width = '790px'; // Lebar format kertas A4 Portrait standar
+            element.className = 'text-black bg-white leading-tight font-serif';
+            element.style.width = '740px'; 
+            element.style.padding = '15px 25px';
+            element.style.color = '#000000';
+            element.style.backgroundColor = '#ffffff';
 
             const currentYear = new Date().getFullYear();
-            const statusLulus = student.id % 2 === 0 ? "LULUS" : "TIDAK LULUS";
-            const colorLulus = statusLulus === "LULUS" ? "color: #059669; font-weight: 800;" : "color: #dc2626; font-weight: 800;";
 
             element.innerHTML = `
-                <!-- KOP SURAT RESMI -->
-                <table style="width: 100%; border-bottom: 3px double #000; padding-bottom: 12px; margin-bottom: 24px;">
+                <!-- KOP SURAT RESMI STANDAR DINAS KEPEMERINTAHAN (SIMETRIS & CENTERED) -->
+                <table style="width: 100%; border-bottom: 4px double #000000; padding-bottom: 10px; margin-bottom: 15px; font-family: 'Times New Roman', Times, serif;">
                     <tr>
-                        <td style="width: 15%; text-align: left;">
-                            <img src="https://sman1bandaaceh.sch.id/wp-content/uploads/2018/04/sman1-logoo.png" style="width: 80px; height: auto;" alt="Logo Aceh">
+                        <td style="width: 15%; text-align: left; vertical-align: middle;">
+                            <img src="https://sman1bandaaceh.sch.id/wp-content/uploads/2018/04/sman1-logoo.png" style="width: 70px; height: auto;" alt="Logo SMAN 1">
                         </td>
-                        <td style="width: 85%; text-align: center; font-family: 'Times New Roman', Times, serif;">
-                            <span style="font-size: 16px; font-weight: bold; letter-spacing: 1px;">PEMERINTAH ACEH</span><br>
-                            <span style="font-size: 18px; font-weight: bold; letter-spacing: 1px;">DINAS PENDIDIKAN</span><br>
-                            <span style="font-size: 20px; font-weight: 900; letter-spacing: 1px;">SMA NEGERI 1 BANDA ACEH</span><br>
-                            <span style="font-size: 10px; font-style: italic;">Jalan Prof. A. Majid Ibrahim I No. 07 Desa Punge Jurong Meuraxa, Banda Aceh, Provinsi Aceh, Indonesia</span>
+                        <td style="width: 70%; text-align: center; vertical-align: middle; line-height: 1.3;">
+                            <div style="font-size: 14px; font-weight: bold; margin: 0; text-transform: uppercase; letter-spacing: 0.5px;">PEMERINTAH ACEH</div>
+                            <div style="font-size: 15px; font-weight: bold; margin: 1px 0 0 0; text-transform: uppercase; letter-spacing: 0.5px;">DINAS PENDIDIKAN</div>
+                            <div style="font-size: 18px; font-weight: bold; margin: 2px 0 0 0; text-transform: uppercase; letter-spacing: 0.8px;">SMA NEGERI 1 BANDA ACEH</div>
+                            <div style="font-size: 9px; font-style: italic; margin: 4px 0 0 0; color: #334155; font-weight: normal; font-family: Arial, sans-serif; line-height: 1.3;">
+                                Jalan Prof. A. Majid Ibrahim I No. 07, Punge Jurong, Kec. Meuraxa, Kota Banda Aceh, Kode Pos 23239<br>
+                                Website: sman1bandaaceh.sch.id | Email: info@sman1bandaaceh.sch.id | Telp: (0651) 22354
+                            </div>
+                        </td>
+                        <td style="width: 15%; text-align: right; vertical-align: middle;">
+                            <!-- Spacer kolom kanan untuk memastikan kolom tengah ter-center sempurna -->
+                            &nbsp;
                         </td>
                     </tr>
                 </table>
 
-                <!-- NOMOR SURAT & JUDUL -->
-                <div style="text-align: center; margin-bottom: 24px; font-family: 'Times New Roman', Times, serif;">
-                    <span style="font-size: 14px; font-weight: bold; text-decoration: underline;">SURAT KEPUTUSAN KELULUSAN SISWA BARU</span><br>
-                    <span style="font-size: 11px;">Nomor: 421.3 / SMAN1-BNA / PPDB / ${currentYear}</span>
+                <!-- JUDUL SURAT -->
+                <div style="text-align: center; margin-bottom: 15px; font-family: 'Times New Roman', Times, serif;">
+                    <div style="font-size: 12px; font-weight: bold; text-decoration: underline; text-transform: uppercase; letter-spacing: 0.5px;">FORMULIR BIODATA PENDATAAN SISWA BARU</div>
+                    <div style="font-size: 9.5px; font-weight: bold; margin-top: 2px;">TAHUN AJARAN ${currentYear}/${currentYear+1}</div>
                 </div>
 
-                <p style="text-align: justify; text-indent: 36px; margin-bottom: 16px;">
-                    Berdasarkan hasil seleksi pendaftaran, verifikasi berkas administrasi fisik dan akademik, rapat pleno Panitia Penerimaan Peserta Didik Baru (PPDB) SMA Negeri 1 Banda Aceh Tahun Ajaran 2026/2027, dengan ini Kepala Sekolah SMA Negeri 1 Banda Aceh memutuskan dan menetapkan bahwa:
-                </p>
-
-                <!-- BIODATA SISWA -->
-                <table style="width: 85%; margin: 20px auto; border-collapse: collapse; font-size: 12px;" cellpadding="6">
+                <!-- METADATA JALUR SELEKSI -->
+                <table style="width: 100%; border-collapse: collapse; margin-bottom: 10px; font-family: 'Times New Roman', Times, serif; font-size: 9.5px;">
                     <tr>
-                        <td style="width: 35%; font-weight: bold;">Nama Lengkap</td>
-                        <td style="width: 5%;">:</td>
-                        <td style="width: 60%; font-weight: bold; text-transform: uppercase;">${student.nama_lengkap || '-'}</td>
-                    </tr>
-                    <tr>
-                        <td style="font-weight: bold;">Nomor Induk Siswa Nasional (NISN)</td>
-                        <td>:</td>
-                        <td>${student.nisn || '-'}</td>
-                    </tr>
-                    <tr>
-                        <td style="font-weight: bold;">Sekolah Asal</td>
-                        <td>:</td>
-                        <td>${student.sekolah_lama || '-'}</td>
-                    </tr>
-                    <tr>
-                        <td style="font-weight: bold;">Jalur Pendaftaran</td>
-                        <td>:</td>
-                        <td style="font-weight: 600;">Jalur ${student.path || '-'}</td>
-                    </tr>
-                    <tr style="border-top: 1px solid #e2e8f0; border-bottom: 1px solid #e2e8f0; background-color: #f8fafc;">
-                        <td style="font-weight: bold; font-size: 13px;">STATUS KELULUSAN</td>
-                        <td>:</td>
-                        <td style="font-size: 14px; ${colorLulus}">${statusLulus}</td>
+                        <td style="width: 18%; font-weight: bold;">Jalur Pendaftaran</td>
+                        <td style="width: 2%;">:</td>
+                        <td style="width: 45%; font-weight: bold; color: #1e3a8a; text-transform: uppercase;">JALUR ${student.path || '-'}</td>
+                        <td style="width: 15%; text-align: right; font-weight: bold;">No. Registrasi</td>
+                        <td style="width: 2%; text-align: center;">:</td>
+                        <td style="width: 18%; text-align: right; font-weight: bold; font-family: monospace;">REG-${student.id || '-'}</td>
                     </tr>
                 </table>
 
-                <p style="text-align: justify; text-indent: 36px; margin-top: 16px; margin-bottom: 32px;">
-                    Demikian surat keputusan pengumuman kelulusan ini diterbitkan secara resmi oleh Panitia PPDB SMA Negeri 1 Banda Aceh sebagai bukti administrasi pendaftaran siswa baru untuk digunakan sebagaimana mestinya. Keputusan ini mutlak dan tidak dapat diganggu gugat.
+                <!-- SEKSI A: DATA CALON PESERTA DIDIK -->
+                <div style="background-color: #f1f5f9; border: 1px solid #cbd5e1; padding: 4px 8px; font-size: 9.5px; font-weight: bold; margin-bottom: 6px; text-transform: uppercase; font-family: 'Times New Roman', Times, serif;">
+                    A. DATA CALON PESERTA DIDIK
+                </div>
+                <table style="width: 100%; border-collapse: collapse; margin-bottom: 12px; font-family: 'Times New Roman', Times, serif; font-size: 9px;">
+                    <tr style="border-bottom: 1px solid #e2e8f0;">
+                        <td style="width: 28%; padding: 5px 0; font-weight: bold;">1. Nama Lengkap (Sesuai Ijazah)</td>
+                        <td style="width: 2%; padding: 5px 0;">:</td>
+                        <td style="width: 70%; padding: 5px 0; font-weight: bold; text-transform: uppercase;">${student.nama_lengkap || '-'}</td>
+                    </tr>
+                    <tr style="border-bottom: 1px solid #e2e8f0;">
+                        <td style="padding: 5px 0; font-weight: bold;">2. Nomor Induk Siswa Nasional (NISN)</td>
+                        <td>:</td>
+                        <td style="font-family: monospace; font-weight: bold; font-size: 9.5px;">${student.nisn || '-'}</td>
+                    </tr>
+                    <tr style="border-bottom: 1px solid #e2e8f0;">
+                        <td style="padding: 5px 0; font-weight: bold;">3. NIK / No. Kartu Keluarga (KK)</td>
+                        <td>:</td>
+                        <td>${student.nik || '-'} &nbsp;/&nbsp; ${student.no_kk || '-'}</td>
+                    </tr>
+                    <tr style="border-bottom: 1px solid #e2e8f0;">
+                        <td style="padding: 5px 0; font-weight: bold;">4. Tempat, Tanggal Lahir</td>
+                        <td>:</td>
+                        <td>${student.tempat_lahir || '-'}, ${formatDateIndonesian(student.tanggal_lahir)}</td>
+                    </tr>
+                    <tr style="border-bottom: 1px solid #e2e8f0;">
+                        <td style="padding: 5px 0; font-weight: bold;">5. Jenis Kelamin / Agama</td>
+                        <td>:</td>
+                        <td>${student.jenis_kelamin || '-'} &nbsp;/&nbsp; ${student.agama || '-'}</td>
+                    </tr>
+                    <tr style="border-bottom: 1px solid #e2e8f0;">
+                        <td style="padding: 5px 0; font-weight: bold;">6. Sekolah Asal / NPSN Sekolah Asal</td>
+                        <td>:</td>
+                        <td>${student.sekolah_lama || '-'} &nbsp;(NPSN: ${student.npsn_sekolah_asal || '-'})</td>
+                    </tr>
+                    <tr style="border-bottom: 1px solid #e2e8f0;">
+                        <td style="padding: 5px 0; font-weight: bold; vertical-align: top;">7. Alamat Tempat Tinggal (Sesuai KK)</td>
+                        <td style="vertical-align: top;">:</td>
+                        <td style="text-align: justify; padding: 5px 0; padding-right: 10px; line-height: 1.3;">${student.alamat || '-'}</td>
+                    </tr>
+                    <tr style="border-bottom: 1px solid #e2e8f0;">
+                        <td style="padding: 5px 0; font-weight: bold;">8. Kontak Pendaftar (No. HP / Email)</td>
+                        <td>:</td>
+                        <td>${student.phone || '-'} &nbsp;/&nbsp; ${student.email || '-'}</td>
+                    </tr>
+                    <tr style="border-bottom: 1px solid #e2e8f0;">
+                        <td style="padding: 5px 0; font-weight: bold;">9. Detail Jasmani (Tinggi / Berat Badan)</td>
+                        <td>:</td>
+                        <td>${student.tinggi_badan ? student.tinggi_badan + ' cm' : '-'} &nbsp;/&nbsp; ${student.berat_badan ? student.berat_badan + ' kg' : '-'}</td>
+                    </tr>
+                    <tr style="border-bottom: 1px solid #e2e8f0;">
+                        <td style="padding: 5px 0; font-weight: bold;">10. Hubungan Keluarga & Jarak Rumah</td>
+                        <td>:</td>
+                        <td>Anak ke-${student.anak_ke || '-'} dari ${student.saudara_kandung ? student.saudara_kandung + ' bersaudara' : '-'} &nbsp;|&nbsp; Jarak Rumah: ${student.jarak_rumah ? student.jarak_rumah + ' Km' : '-'} (Tinggal bersama: ${student.tinggal_bersama || '-'})</td>
+                    </tr>
+                </table>
+
+                <!-- SEKSI B: DATA ORANG TUA / WALI KANDUNG -->
+                <div style="background-color: #f1f5f9; border: 1px solid #cbd5e1; padding: 4px 8px; font-size: 9.5px; font-weight: bold; margin-bottom: 6px; text-transform: uppercase; font-family: 'Times New Roman', Times, serif;">
+                    B. DATA ORANG TUA / WALI KANDUNG
+                </div>
+                <table style="width: 100%; border-collapse: collapse; margin-bottom: 12px; font-family: 'Times New Roman', Times, serif; font-size: 8.5px; border: 1px solid #cbd5e1;">
+                    <thead>
+                        <tr style="background-color: #f8fafc; font-weight: bold; text-align: center; border-bottom: 1px solid #cbd5e1;">
+                            <td style="width: 25%; padding: 6px; border-right: 1px solid #cbd5e1; font-size: 9px;">Uraian Data</td>
+                            <td style="width: 25%; padding: 6px; border-right: 1px solid #cbd5e1; font-size: 9px;">Ayah Kandung</td>
+                            <td style="width: 25%; padding: 6px; border-right: 1px solid #cbd5e1; font-size: 9px;">Ibu Kandung</td>
+                            <td style="width: 25%; padding: 6px; font-size: 9px;">Wali (Bila Ada)</td>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr style="border-bottom: 1px solid #cbd5e1;">
+                            <td style="padding: 5px; font-weight: bold; border-right: 1px solid #cbd5e1;">1. Nama Lengkap</td>
+                            <td style="padding: 5px; font-weight: bold; border-right: 1px solid #cbd5e1; text-transform: uppercase;">${student.nama_ayah || '-'}</td>
+                            <td style="padding: 5px; font-weight: bold; border-right: 1px solid #cbd5e1; text-transform: uppercase;">${student.nama_ibu || '-'}</td>
+                            <td style="padding: 5px; text-transform: uppercase;">${student.nama_wali || '-'}</td>
+                        </tr>
+                        <tr style="border-bottom: 1px solid #cbd5e1;">
+                            <td style="padding: 5px; font-weight: bold; border-right: 1px solid #cbd5e1;">2. Pendidikan Terakhir</td>
+                            <td style="padding: 5px; border-right: 1px solid #cbd5e1;">${student.pendidikan_ayah || '-'}</td>
+                            <td style="padding: 5px; border-right: 1px solid #cbd5e1;">${student.pendidikan_ibu || '-'}</td>
+                            <td style="padding: 5px;">${student.pendidikan_wali || '-'}</td>
+                        </tr>
+                        <tr style="border-bottom: 1px solid #cbd5e1;">
+                            <td style="padding: 5px; font-weight: bold; border-right: 1px solid #cbd5e1;">3. Pekerjaan Utama</td>
+                            <td style="padding: 5px; border-right: 1px solid #cbd5e1;">${student.pekerjaan_ayah || '-'}</td>
+                            <td style="padding: 5px; border-right: 1px solid #cbd5e1;">${student.pekerjaan_ibu || '-'}</td>
+                            <td style="padding: 5px;">${student.pekerjaan_wali || '-'}</td>
+                        </tr>
+                        <tr style="border-bottom: 1px solid #cbd5e1;">
+                            <td style="padding: 5px; font-weight: bold; border-right: 1px solid #cbd5e1;">4. Nomor Telepon / HP</td>
+                            <td style="padding: 5px; border-right: 1px solid #cbd5e1;">${student.hp_ayah || '-'}</td>
+                            <td style="padding: 5px; border-right: 1px solid #cbd5e1;">${student.hp_ibu || '-'}</td>
+                            <td style="padding: 5px;">${student.hp_wali || '-'}</td>
+                        </tr>
+                        <tr>
+                            <td style="padding: 5px; font-weight: bold; border-right: 1px solid #cbd5e1; vertical-align: top;">5. Alamat Domisili</td>
+                            <td style="padding: 5px; border-right: 1px solid #cbd5e1; vertical-align: top; max-width: 120px; line-height: 1.2; word-wrap: break-word;">${student.alamat_ayah || '-'}</td>
+                            <td style="padding: 5px; border-right: 1px solid #cbd5e1; vertical-align: top; max-width: 120px; line-height: 1.2; word-wrap: break-word;">${student.alamat_ibu || '-'}</td>
+                            <td style="padding: 5px; vertical-align: top; max-width: 120px; line-height: 1.2; word-wrap: break-word;">${student.alamat_wali || '-'}</td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <!-- SEKSI C: DATA PRESTASI (HANYA DISAJIKAN JIKA TERISI) -->
+                ${student.nama_kejuaraan ? `
+                <div style="background-color: #f1f5f9; border: 1px solid #cbd5e1; padding: 4px 8px; font-size: 9.5px; font-weight: bold; margin-bottom: 6px; text-transform: uppercase; font-family: 'Times New Roman', Times, serif;">
+                    C. PRESTASI PENDUKUNG (KHUSUS JALUR PRESTASI)
+                </div>
+                <table style="width: 100%; border-collapse: collapse; margin-bottom: 12px; font-family: 'Times New Roman', Times, serif; font-size: 9px;">
+                    <tr style="border-bottom: 1px solid #e2e8f0;">
+                        <td style="width: 28%; padding: 5px 0; font-weight: bold;">1. Nama Kejuaraan / Bidang</td>
+                        <td style="width: 2%; padding: 5px 0;">:</td>
+                        <td style="width: 70%; padding: 5px 0;">${student.nama_kejuaraan} &nbsp;(${student.bidang_prestasi || '-'})</td>
+                    </tr>
+                    <tr style="border-bottom: 1px solid #e2e8f0;">
+                        <td style="padding: 5px 0; font-weight: bold;">2. Tingkat / Juara Ke / Tahun</td>
+                        <td>:</td>
+                        <td>${student.tingkat_prestasi || '-'} &nbsp;|&nbsp; Juara Ke-${student.juara_ke || '-'} (Tahun ${student.tahun_prestasi || '-'})</td>
+                    </tr>
+                    <tr style="border-bottom: 1px solid #e2e8f0;">
+                        <td style="padding: 5px 0; font-weight: bold;">3. Penyelenggara Kegiatan</td>
+                        <td>:</td>
+                        <td>${student.penyelenggara || '-'}</td>
+                    </tr>
+                </table>
+                ` : ''}
+
+                <!-- PERNYATAAN INTEGRITAS DATA -->
+                <p style="font-size: 8px; text-align: justify; margin-top: 10px; margin-bottom: 15px; font-style: italic; line-height: 1.3; color: #1e293b; font-family: Arial, sans-serif;">
+                    * Saya menyatakan dengan sesungguhnya bahwa seluruh data yang diisi pada formulir ini adalah benar dan sesuai dengan keadaan yang sebenarnya. Apabila di kemudian hari ditemukan pemalsuan atau manipulasi data dokumen fisik pendukung, saya bersedia menerima sanksi pembatalan kelulusan hak mendaftar di SMA Negeri 1 Banda Aceh secara sepihak sesuai hukum yang berlaku.
                 </p>
 
-                <!-- TANDA TANGAN & QR CODE -->
-                <table style="width: 100%; margin-top: 40px; font-family: 'Times New Roman', Times, serif;">
+                <!-- AREA OTENTIKASI & TANDA TANGAN (3 KOLOM SEJAJAR: QR CODE, WALI, PENDAFTAR) -->
+                <table style="width: 100%; font-family: 'Times New Roman', Times, serif; font-size: 10px; margin-top: 15px; border-collapse: collapse;">
                     <tr>
-                        <td style="width: 50%; text-align: left; vertical-align: top; padding-left: 40px;">
-                            <div style="font-size: 10px; color: #475569; margin-bottom: 8px;">Barcode Validasi SK Resmi:</div>
-                            <div id="pdf-qrcode" style="width: 110px; height: 110px; padding: 5px; border: 1px solid #e2e8f0; border-radius: 8px;"></div>
+                        <!-- QR VALIDATOR PANITIA (SEBELAH KIRI) -->
+                        <td style="width: 32%; text-align: left; vertical-align: top;">
+                            <div style="font-size: 8px; color: #475569; margin-bottom: 5px; font-weight: bold; text-transform: uppercase; font-family: Arial, sans-serif;">Sistem Validasi Valid:</div>
+                            <div id="pdf-qrcode" style="width: 76px; height: 76px; padding: 4px; border: 1px solid #cbd5e1; border-radius: 6px; background-color: #ffffff; display: inline-block;"></div>
+                            <div style="font-size: 7.5px; color: #64748b; margin-top: 3px; font-family: monospace;">REG-ID: ${student.id || '-'}</div>
                         </td>
-                        <td style="width: 50%; text-align: center; vertical-align: top;">
-                            <span>Banda Aceh, ${new Date().toLocaleDateString('id-ID', {day: 'numeric', month: 'long', year: 'numeric'})}</span><br>
-                            <span>Kepala Sekolah SMAN 1 Banda Aceh</span>
+                        
+                        <!-- TANDA TANGAN ORANG TUA (TENGAH) -->
+                        <td style="width: 34%; text-align: center; vertical-align: top;">
+                            <span style="font-size: 10px;">Mengetahui,</span><br>
+                            <span style="font-size: 10px; font-weight: bold;">Orang Tua / Wali Siswa,</span>
+                            <br><br><br><br><br>
+                            <span style="display: inline-block; width: 160px; font-weight: bold;">( ___________________________ )</span><br>
+                            <span style="font-size: 8px; color: #475569; display: block; margin-top: 4px; font-family: Arial, sans-serif;">Nama Terang & Tanda Tangan</span>
+                        </td>
+
+                        <!-- TANDA TANGAN PENDAFTAR (KANAN) -->
+                        <td style="width: 34%; text-align: center; vertical-align: top;">
+                            <span style="font-size: 10px;">Banda Aceh, ${new Date().toLocaleDateString('id-ID', {day: 'numeric', month: 'long', year: 'numeric'})}</span><br>
+                            <span style="font-size: 10px; font-weight: bold;">Siswa Calon Pendaftar,</span>
                             <br><br><br><br>
-                            <span style="font-weight: bold; text-decoration: underline;">Dr. SMAN 1 Banda Aceh, M.Pd.</span><br>
-                            <span>NIP. 19780512 200501 1 002</span>
+                            <span style="font-weight: bold; text-decoration: underline; text-transform: uppercase; font-size: 10px; display: block;">${student.nama_lengkap}</span>
+                            <span style="font-size: 8px; color: #475569; display: block; margin-top: 3px; font-family: Arial, sans-serif;">NISN. ${student.nisn || '-'}</span>
                         </td>
                     </tr>
                 </table>
@@ -1608,49 +1812,56 @@
 
             document.body.appendChild(element);
 
-            // Generate QR Code ke dalam PDF secara instan
-            const qrText = `NISN: ${student.nisn}\nNama: ${student.nama_lengkap}\nJalur: ${student.path}\nKeterangan: ${statusLulus}`;
+            // Generate QR Code ke dalam PDF secara instan tanpa teks PPDB
+            const qrText = `BIODATA SISWA BARU SMAN 1 BANDA ACEH\nNISN: ${student.nisn}\nNama: ${student.nama_lengkap}\nJalur: ${student.path}\nVerifikasi: VALID`;
             new QRCode(element.querySelector('#pdf-qrcode'), {
                 text: qrText,
-                width: 100,
-                height: 100,
+                width: 68,
+                height: 68,
                 colorDark : "#000000",
                 colorLight : "#ffffff",
                 correctLevel : QRCode.CorrectLevel.M
             });
 
-            // Konfigurasi konversi berkas html2pdf
+            // Konfigurasi konversi berkas html2pdf dengan margin formal
             const opt = {
-                margin:       10,
-                filename:     `Surat_Keputusan_Kelulusan_${student.nisn}_${student.nama_lengkap.replace(/\s+/g, '_')}.pdf`,
+                margin:       [10, 15, 10, 15], // [top, left, bottom, right] dalam mm
+                filename:     `Biodata_Siswa_${student.nisn}_${student.nama_lengkap.replace(/\s+/g, '_')}.pdf`,
                 image:        { type: 'jpeg', quality: 1.0 },
                 html2canvas:  { scale: 2, logging: false, useCORS: true },
                 jsPDF:        { unit: 'mm', format: 'a4', orientation: 'portrait' }
             };
 
-            // Jalankan render setelah QR Code termuat
+            // Jalankan render setelah QR Code termuat secara presisi
             setTimeout(() => {
                 html2pdf().from(element).set(opt).save().then(() => {
                     document.body.removeChild(element);
                     Swal.fire({
                         icon: 'success',
-                        title: 'PDF Berhasil Diunduh!',
-                        text: 'Surat Keputusan Kelulusan resmi telah disimpan ke komputer/perangkat Anda.',
+                        title: 'Biodata Berhasil Diunduh!',
+                        text: 'File Biodata resmi pendaftar telah disimpan ke komputer/perangkat Anda.',
                         timer: 2000,
                         showConfirmButton: false
                     });
                 }).catch(err => {
                     console.error("PDF Render Error:", err);
-                    Swal.fire('Gagal', 'Terjadi kesalahan sistem saat membuat file PDF kelulusan.', 'error');
+                    Swal.fire('Gagal', 'Terjadi kesalahan sistem saat membuat file PDF biodata.', 'error');
                 });
             }, 600);
         }
 
         function viewStudent(id) {
-            const student = students.find(s => s.id === id);
+            // Mengubah pencarian ID agar kebal dari bentrokan tipe data string/number
+            const student = students.find(s => Number(s.id) === Number(id));
             if (!student) return;
+            
             fields.forEach(field => {
-                safeSetText(`d_${field}`, student[field] || '-');
+                // Memformat tampilan tanggal lahir secara manis untuk lisan Indonesia
+                if (field === 'tanggal_lahir') {
+                    safeSetText(`d_${field}`, formatDateIndonesian(student[field]));
+                } else {
+                    safeSetText(`d_${field}`, student[field] || '-');
+                }
             });
             
             const btnEdit = document.getElementById('btn-edit-from-detail');
@@ -1665,16 +1876,18 @@
                 }
             }
             
-            // Konfigurasi tombol cetak PDF Kelulusan resmi di modal detail
+            // Konfigurasi tombol cetak PDF secara aman
             let btnPDF = document.getElementById('btn-pdf-from-detail');
             if (!btnPDF) {
                 btnPDF = document.createElement('button');
                 btnPDF.id = 'btn-pdf-from-detail';
                 btnPDF.type = 'button';
                 btnPDF.className = 'px-5 py-2.5 bg-teal-600 hover:bg-teal-700 text-white rounded-2xl font-bold transition-all flex items-center gap-1.5 text-xs';
-                btnPDF.innerHTML = `<i class="fas fa-file-pdf"></i> Cetak SK`;
-                const footer = document.querySelector('#detail-modal div.p-5');
+                btnPDF.innerHTML = `<i class="fas fa-file-pdf"></i> Cetak Biodata`;
+                const footer = document.getElementById('detail-modal-footer');
                 if (footer) footer.insertBefore(btnPDF, btnEdit);
+            } else {
+                btnPDF.innerHTML = `<i class="fas fa-file-pdf"></i> Cetak Biodata`;
             }
             btnPDF.onclick = function() {
                 generatePDF(student);
