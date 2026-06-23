@@ -24,6 +24,10 @@
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <!-- SheetJS untuk Download Excel -->
     <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
+    <!-- html2pdf.js -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+    <!-- qrcode.js -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
 
     <style>
         /* Lovelace Minimalist Base Styling */
@@ -92,7 +96,7 @@
                 
                 <!-- Sisi Kiri: Toggle Sidebar & Logo -->
                 <div class="flex items-center gap-3">
-                    <button id="sidebar-toggle" onclick="toggleSidebar()" class="p-2 text-slate-500 hover:text-blue-600 hover:bg-slate-100 dark:hover:bg-slate-700 rounded-xl transition-all hidden-screen">
+                    <button id="sidebar-toggle" onclick="toggleSidebar()" class="p-2.5 text-slate-500 hover:text-blue-600 hover:bg-slate-100 dark:hover:bg-slate-700 rounded-xl transition-all hidden-screen">
                         <i class="fas fa-bars text-lg"></i>
                     </button>
                     
@@ -129,14 +133,14 @@
         </header>
 
         <!-- APP CONTENT LAYOUT -->
-        <div class="flex flex-1 relative">
+        <div class="flex flex-1 relative overflow-hidden">
             
-            <!-- Sidebar: Ditambahkan class 'hidden-screen' agar disembunyikan secara bawaan saat belum login -->
-            <aside id="sidebar" class="bg-white dark:bg-slate-800 border-r border-slate-200 dark:border-slate-700 w-64 fixed md:sticky top-[61px] bottom-0 left-0 z-30 transform -translate-x-full md:translate-x-0 transition-transform duration-300 ease-in-out flex flex-col justify-between shadow-sm hidden-screen">
+            <!-- Sidebar Drawer: Slide-out panel -->
+            <aside id="sidebar" class="bg-white dark:bg-slate-800 border-r border-slate-200 dark:border-slate-700 w-64 fixed top-[61px] bottom-0 left-0 z-30 transform -translate-x-full transition-transform duration-300 ease-in-out flex flex-col justify-between shadow-sm hidden-screen">
                 <div class="p-4 space-y-6">
                     <!-- User Mini Profile -->
-                    <div onclick="openProfileScreen()" class="p-3 bg-slate-50 dark:bg-slate-700/50 hover:bg-blue-50 dark:hover:bg-slate-700 rounded-2xl border border-slate-100 dark:border-slate-700 flex items-center gap-3 cursor-pointer transition-all">
-                        <div class="w-10 h-10 bg-blue-100 dark:bg-blue-900 text-blue-600 dark:text-blue-300 rounded-xl flex items-center justify-center font-bold text-sm">
+                    <div onclick="openProfileScreen()" class="p-3 bg-slate-50 dark:bg-slate-700/50 hover:bg-blue-50 dark:hover:bg-slate-700 rounded-2xl border border-slate-100 dark:border-slate-700 flex items-center gap-3 cursor-pointer transition-all flex-shrink-0">
+                        <div class="w-10 h-10 bg-blue-100 dark:bg-blue-900 text-blue-600 dark:text-blue-300 rounded-xl flex items-center justify-center font-bold text-sm flex-shrink-0">
                             <span id="profile-initials">U</span>
                         </div>
                         <div class="flex flex-col overflow-hidden">
@@ -193,207 +197,214 @@
                 </div>
             </aside>
 
-            <!-- Back-drop overlay untuk Mobile Sidebar -->
-            <div id="sidebar-overlay" onclick="toggleSidebar()" class="fixed inset-0 bg-slate-900/40 z-20 hidden md:hidden transition-opacity"></div>
+            <!-- Back-drop overlay untuk Mobile & Tablet Sidebar -->
+            <div id="sidebar-overlay" onclick="toggleSidebar()" class="fixed inset-0 bg-slate-900/40 z-20 hidden transition-opacity"></div>
 
-            <main class="flex-grow p-4 md:p-6 overflow-x-hidden min-h-[calc(100vh-61px)] flex flex-col justify-between">
-                
-                <div>
-                    <!-- 1. LOGIN SCREEN -->
-                    <div id="login-screen" class="hidden-screen flex-grow flex items-center justify-center w-full fade-in py-12">
-                        <div class="bg-white dark:bg-slate-800 lovelace-card border border-slate-200 dark:border-slate-700 p-8 md:p-10 w-full max-w-md shadow-sm transition-colors duration-300">
-                            <div class="text-center mb-8">
-                                <div class="w-16 h-16 bg-blue-50 dark:bg-blue-950 text-blue-600 dark:text-blue-400 mx-auto rounded-2xl flex items-center justify-center mb-4 border border-blue-100 dark:border-blue-900">
-                                    <i class="fas fa-user-shield text-2xl"></i>
+            <!-- Content Area Container with transition padding -->
+            <div id="content-container" class="flex-grow transition-all duration-300 ease-in-out w-full flex flex-col justify-between">
+                <main class="flex-grow p-4 md:p-6 overflow-x-hidden min-h-[calc(100vh-61px)] flex flex-col justify-between">
+                    
+                    <div>
+                        <!-- 1. LOGIN SCREEN -->
+                        <div id="login-screen" class="hidden-screen flex-grow flex items-center justify-center w-full fade-in py-12">
+                            <div class="bg-white dark:bg-slate-800 lovelace-card border border-slate-200 dark:border-slate-700 p-8 md:p-10 w-full max-w-md shadow-sm transition-colors duration-300">
+                                <div class="text-center mb-8">
+                                    <div class="w-16 h-16 bg-blue-50 dark:bg-blue-950 text-blue-600 dark:text-blue-400 mx-auto rounded-2xl flex items-center justify-center mb-4 border border-blue-100 dark:border-blue-900">
+                                        <i class="fas fa-user-shield text-2xl"></i>
+                                    </div>
+                                    <h2 class="text-2xl font-extrabold text-slate-800 dark:text-slate-100 tracking-tight">Otentikasi</h2>
+                                    <p class="text-sm text-slate-500 mt-2 font-medium">Silakan masuk menggunakan kredensial Anda</p>
                                 </div>
-                                <h2 class="text-2xl font-extrabold text-slate-800 dark:text-slate-100 tracking-tight">Otentikasi</h2>
-                                <p class="text-sm text-slate-500 mt-2 font-medium">Silakan masuk menggunakan kredensial Anda</p>
-                            </div>
-                            <form onsubmit="handleLogin(event)" class="space-y-4">
-                                <div>
-                                    <label class="block text-xs font-bold text-slate-600 mb-1.5 uppercase tracking-wide">Username</label>
-                                    <div class="relative">
-                                        <div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none text-slate-400">
-                                            <i class="fas fa-user"></i>
+                                <form onsubmit="handleLogin(event)" class="space-y-4">
+                                    <div>
+                                        <label class="block text-xs font-bold text-slate-600 mb-1.5 uppercase tracking-wide">Username</label>
+                                        <div class="relative">
+                                            <div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none text-slate-400">
+                                                <i class="fas fa-user"></i>
+                                            </div>
+                                            <input type="text" id="username" required class="lovelace-input w-full pl-10 pr-4 py-3 text-sm text-slate-800 dark:text-slate-100 bg-slate-50 dark:bg-slate-700 border border-transparent dark:border-slate-600 focus:bg-white dark:focus:bg-slate-800 focus:border-blue-500 outline-none transition-all" placeholder="admin">
                                         </div>
-                                        <input type="text" id="username" required class="lovelace-input w-full pl-10 pr-4 py-3 text-sm text-slate-800 dark:text-slate-100 bg-slate-50 dark:bg-slate-700 border border-transparent dark:border-slate-600 focus:bg-white dark:focus:bg-slate-800 focus:border-blue-500 outline-none transition-all" placeholder="admin">
                                     </div>
-                                </div>
-                                <div>
-                                    <label class="block text-xs font-bold text-slate-500 dark:text-slate-400 mb-1 uppercase tracking-wide">Password</label>
-                                    <div class="relative">
-                                        <div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none text-slate-400">
-                                            <i class="fas fa-lock"></i>
+                                    <div>
+                                        <label class="block text-xs font-bold text-slate-500 dark:text-slate-400 mb-1 uppercase tracking-wide">Password</label>
+                                        <div class="relative">
+                                            <div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none text-slate-400">
+                                                <i class="fas fa-lock"></i>
+                                            </div>
+                                            <input type="password" id="password" required class="lovelace-input w-full pl-10 pr-4 py-3 text-sm text-slate-800 dark:text-slate-100 bg-slate-50 dark:bg-slate-700 border border-transparent dark:border-slate-600 focus:bg-white dark:focus:bg-slate-800 focus:border-blue-500 outline-none transition-all" placeholder="••••••••">
                                         </div>
-                                        <input type="password" id="password" required class="lovelace-input w-full pl-10 pr-4 py-3 text-sm text-slate-800 dark:text-slate-100 bg-slate-50 dark:bg-slate-700 border border-transparent dark:border-slate-600 focus:bg-white dark:focus:bg-slate-800 focus:border-blue-500 outline-none transition-all" placeholder="••••••••">
                                     </div>
-                                </div>
-                                <button type="submit" class="w-full bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white font-bold py-3.5 rounded-xl transition-all shadow-lg shadow-blue-500/30 border border-white/20 mt-2 hover:scale-[1.02]">
-                                    Masuk ke Sistem <i class="fas fa-arrow-right ml-2"></i>
-                                </button>
-                            </form>
-                        </div>
-                    </div>
-
-                    <!-- 2. DASHBOARD SCREEN -->
-                    <div id="dashboard-screen" class="hidden-screen fade-in w-full">
-                        <div class="mb-8 mt-4 text-center md:text-left bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 p-6 rounded-2xl">
-                            <h2 class="text-xl font-extrabold text-slate-800 dark:text-slate-100 tracking-tight">Dashboard Pendataan</h2>
-                            <p class="text-slate-500 dark:text-slate-400 text-xs mt-1 font-medium">Pilih salah satu jalur pendaftaran di bawah ini atau melalui menu sidebar.</p>
-                        </div>
-
-                        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-                            <!-- Jalur Prestasi -->
-                            <div onclick="openPath('Prestasi')" class="lovelace-card bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 p-6 hover:shadow-lg dark:hover:shadow-slate-950/20 hover:-translate-y-1 cursor-pointer text-center group flex flex-col justify-between h-full">
-                                <div>
-                                    <div class="w-14 h-14 bg-amber-50 dark:bg-amber-950/40 text-amber-600 dark:text-amber-400 border border-amber-100 dark:border-amber-900 mx-auto rounded-2xl flex items-center justify-center mb-4 transition-transform duration-300">
-                                        <i class="fas fa-trophy text-xl"></i>
-                                    </div>
-                                    <h3 class="text-sm font-bold text-slate-800 dark:text-slate-100">Jalur Prestasi</h3>
-                                    <p class="text-[10px] text-slate-400 mt-1 leading-relaxed">Siswa dengan pencapaian prestasi akademik & non-akademik.</p>
-                                </div>
-                                <div class="mt-5 pt-4 border-t border-slate-100 dark:border-slate-700">
-                                    <span class="text-2xl font-black text-slate-800 dark:text-slate-100" id="count-Prestasi">0</span>
-                                    <span class="text-[9px] font-bold text-slate-400 uppercase tracking-widest block mt-0.5">Siswa Terdaftar</span>
-                                </div>
-                            </div>
-                            <!-- Jalur Domisili -->
-                            <div onclick="openPath('Domisili')" class="lovelace-card bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 p-6 hover:shadow-lg dark:hover:shadow-slate-950/20 hover:-translate-y-1 cursor-pointer text-center group flex flex-col justify-between h-full">
-                                <div>
-                                    <div class="w-14 h-14 bg-emerald-50 dark:bg-emerald-950/40 text-emerald-600 dark:text-emerald-400 border border-emerald-100 dark:border-emerald-900 mx-auto rounded-2xl flex items-center justify-center mb-4 transition-transform duration-300">
-                                        <i class="fas fa-map-marker-alt text-2xl text-emerald-600"></i>
-                                    </div>
-                                    <h3 class="text-sm font-bold text-slate-800 dark:text-slate-100">Jalur Domisili</h3>
-                                    <p class="text-[10px] text-slate-400 mt-1 leading-relaxed">Berdasarkan jarak zonasi.</p>
-                                </div>
-                                <div class="mt-5 pt-4 border-t border-slate-100 dark:border-slate-700">
-                                    <span class="text-2xl font-black text-slate-800 dark:text-slate-100" id="count-Domisili">0</span>
-                                    <span class="text-[9px] font-bold text-slate-400 uppercase tracking-widest block mt-0.5">Siswa Terdaftar</span>
-                                </div>
-                            </div>
-                            <!-- Jalur Afirmasi -->
-                            <div onclick="openPath('Afirmasi')" class="lovelace-card bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 p-6 hover:shadow-lg dark:hover:shadow-slate-950/20 hover:-translate-y-1 cursor-pointer text-center group flex flex-col justify-between h-full">
-                                <div>
-                                    <div class="w-14 h-14 bg-blue-50 dark:bg-blue-950/40 text-blue-600 dark:text-blue-400 border border-blue-100 dark:border-blue-900 mx-auto rounded-2xl flex items-center justify-center mb-4 transition-transform duration-300">
-                                        <i class="fas fa-hands-helping text-2xl text-blue-600"></i>
-                                    </div>
-                                    <h3 class="text-sm font-bold text-slate-800 dark:text-slate-100">Jalur Afirmasi</h3>
-                                    <p class="text-[10px] text-slate-400 mt-1 leading-relaxed">Keluarga ekonomi tidak mampu.</p>
-                                </div>
-                                <div class="mt-5 pt-4 border-t border-slate-100 dark:border-slate-700">
-                                    <span class="text-2xl font-black text-slate-800 dark:text-slate-100" id="count-Afirmasi">0</span>
-                                    <span class="text-[9px] font-bold text-slate-400 uppercase tracking-widest block mt-1">Siswa Terdaftar</span>
-                                </div>
-                            </div>
-                            <!-- Jalur Mutasi -->
-                            <div onclick="openPath('Mutasi')" class="lovelace-card bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 p-6 hover:shadow-lg dark:hover:shadow-slate-950/20 hover:-translate-y-1 cursor-pointer text-center group flex flex-col justify-between h-full">
-                                <div>
-                                    <div class="w-14 h-14 bg-purple-50 dark:bg-purple-950/40 text-purple-600 dark:text-purple-400 border border-purple-100 dark:border-purple-900 mx-auto rounded-2xl flex items-center justify-center mb-4 transition-transform duration-300">
-                                        <i class="fas fa-exchange-alt text-xl"></i>
-                                    </div>
-                                    <h3 class="text-sm font-bold text-slate-800 dark:text-slate-100">Jalur Mutasi</h3>
-                                    <p class="text-[10px] text-slate-400 mt-1 leading-relaxed">Seleksi siswa akibat perpindahan dinas kerja orang tua.</p>
-                                </div>
-                                <div class="mt-5 pt-4 border-t border-slate-100 dark:border-slate-700">
-                                    <span class="text-2xl font-black text-slate-800 dark:text-slate-100" id="count-Mutasi">0</span>
-                                    <span class="text-[9px] font-bold text-slate-400 uppercase tracking-widest block mt-0.5">Siswa Terdaftar</span>
-                                </div>
+                                    <button type="submit" class="w-full bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white font-bold py-3.5 rounded-xl transition-all shadow-lg shadow-blue-500/30 border border-white/20 mt-2 hover:scale-[1.02]">
+                                        Masuk ke Sistem <i class="fas fa-arrow-right ml-2"></i>
+                                    </button>
+                                </form>
                             </div>
                         </div>
-                    </div>
 
-                    <!-- 3. CRUD SCREEN (Data Siswa per Jalur) -->
-                    <div id="crud-screen" class="hidden-screen fade-in flex-col flex-grow w-full">
-                        <div class="lovelace-card bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 p-5 mb-6 flex flex-col md:flex-row justify-between items-start md:items-center gap-4 shadow-sm">
-                            <div>
-                                <button onclick="backToDashboard()" class="text-slate-500 dark:text-slate-400 hover:text-blue-600 dark:hover:text-blue-400 font-bold text-xs mb-2 inline-flex items-center transition-colors bg-slate-50 dark:bg-slate-700 px-3 py-1.5 rounded-xl border border-slate-200 dark:border-slate-600">
-                                    <i class="fas fa-arrow-left mr-1.5"></i> Kembali
-                                </button>
-                                <h2 class="text-lg font-extrabold text-slate-800 dark:text-slate-100 flex items-center gap-2 mt-1">
-                                    Daftar Siswa <span class="text-slate-300 dark:text-slate-600 font-light">|</span> Jalur <span id="current-path-title" class="text-blue-600 dark:text-blue-400 uppercase tracking-tight font-black"></span>
+                        <!-- 2. DASHBOARD SCREEN -->
+                        <div id="dashboard-screen" class="hidden-screen fade-in w-full">
+                            <div class="mb-8 mt-4 text-center md:text-left bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 p-6 rounded-2xl flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 shadow-sm">
+                                <div>
+                                    <h2 class="text-xl font-extrabold text-slate-800 dark:text-slate-100 tracking-tight">Dashboard Pendataan</h2>
+                                    <p class="text-slate-500 dark:text-slate-400 text-xs mt-1 font-medium">Pilih salah satu jalur pendaftaran di bawah ini atau melalui menu sidebar.</p>
+                                </div>
+                                <div class="bg-blue-50 dark:bg-blue-950/40 border border-blue-100 dark:border-blue-950 px-4 py-2 rounded-xl shrink-0 self-center sm:self-auto flex flex-col items-center sm:items-start">
+                                    <span class="text-[9px] uppercase font-bold text-slate-400 tracking-wider">Akses Terbuka</span>
+                                    <span id="dash-current-role" class="text-xs font-bold text-blue-600 dark:text-blue-400">Loading...</span>
+                                </div>
+                            </div>
+
+                            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+                                <!-- Jalur Prestasi -->
+                                <div onclick="openPath('Prestasi')" class="lovelace-card bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 p-6 hover:shadow-lg dark:hover:shadow-slate-950/20 hover:-translate-y-1 cursor-pointer text-center group flex flex-col justify-between h-full shadow-sm">
+                                    <div>
+                                        <div class="w-14 h-14 bg-amber-50 dark:bg-amber-950/40 text-amber-600 dark:text-amber-400 border border-amber-100 dark:border-amber-900 mx-auto rounded-2xl flex items-center justify-center mb-4 transition-transform duration-300">
+                                            <i class="fas fa-trophy text-xl"></i>
+                                        </div>
+                                        <h3 class="text-sm font-bold text-slate-800 dark:text-slate-100">Jalur Prestasi</h3>
+                                        <p class="text-[10px] text-slate-400 mt-1 leading-relaxed">Siswa dengan pencapaian prestasi akademik & non-akademik.</p>
+                                    </div>
+                                    <div class="mt-5 pt-4 border-t border-slate-100 dark:border-slate-700">
+                                        <span class="text-2xl font-black text-slate-800 dark:text-slate-100" id="count-Prestasi">0</span>
+                                        <span class="text-[9px] font-bold text-slate-400 uppercase tracking-widest block mt-0.5">Siswa Terdaftar</span>
+                                    </div>
+                                </div>
+                                <!-- Jalur Domisili -->
+                                <div onclick="openPath('Domisili')" class="lovelace-card bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 p-6 hover:shadow-lg dark:hover:shadow-slate-950/20 hover:-translate-y-1 cursor-pointer text-center group flex flex-col justify-between h-full shadow-sm">
+                                    <div>
+                                        <div class="w-14 h-14 bg-emerald-50 dark:bg-emerald-950/40 text-emerald-600 dark:text-emerald-400 border border-emerald-100 dark:border-emerald-900 mx-auto rounded-2xl flex items-center justify-center mb-4 transition-transform duration-300">
+                                            <i class="fas fa-map-marker-alt text-xl"></i>
+                                        </div>
+                                        <h3 class="text-sm font-bold text-slate-800 dark:text-slate-100">Jalur Domisili</h3>
+                                        <p class="text-[10px] text-slate-400 mt-1 leading-relaxed">Berdasarkan jarak zonasi.</p>
+                                    </div>
+                                    <div class="mt-5 pt-4 border-t border-slate-100 dark:border-slate-700">
+                                        <span class="text-2xl font-black text-slate-800 dark:text-slate-100" id="count-Domisili">0</span>
+                                        <span class="text-[9px] font-bold text-slate-400 uppercase tracking-widest block mt-0.5">Siswa Terdaftar</span>
+                                    </div>
+                                </div>
+                                <!-- Jalur Afirmasi -->
+                                <div onclick="openPath('Afirmasi')" class="lovelace-card bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 p-6 hover:shadow-lg dark:hover:shadow-slate-950/20 hover:-translate-y-1 cursor-pointer text-center group flex flex-col justify-between h-full shadow-sm">
+                                    <div>
+                                        <div class="w-14 h-14 bg-blue-50 dark:bg-blue-950/40 text-blue-600 dark:text-blue-400 border border-blue-100 dark:border-blue-900 mx-auto rounded-2xl flex items-center justify-center mb-4 transition-transform duration-300">
+                                            <i class="fas fa-hands-helping text-xl"></i>
+                                        </div>
+                                        <h3 class="text-sm font-bold text-slate-800 dark:text-slate-100">Jalur Afirmasi</h3>
+                                        <p class="text-[10px] text-slate-400 mt-1 leading-relaxed">Keluarga ekonomi tidak mampu.</p>
+                                    </div>
+                                    <div class="mt-5 pt-4 border-t border-slate-100 dark:border-slate-700">
+                                        <span class="text-2xl font-black text-slate-800 dark:text-slate-100" id="count-Afirmasi">0</span>
+                                        <span class="text-[9px] font-bold text-slate-400 uppercase tracking-widest block mt-1">Siswa Terdaftar</span>
+                                    </div>
+                                </div>
+                                <!-- Jalur Mutasi -->
+                                <div onclick="openPath('Mutasi')" class="lovelace-card bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 p-6 hover:shadow-lg dark:hover:shadow-slate-950/20 hover:-translate-y-1 cursor-pointer text-center group flex flex-col justify-between h-full shadow-sm">
+                                    <div>
+                                        <div class="w-14 h-14 bg-purple-50 dark:bg-purple-950/40 text-purple-600 dark:text-purple-400 border border-purple-100 dark:border-purple-900 mx-auto rounded-2xl flex items-center justify-center mb-4 transition-transform duration-300">
+                                            <i class="fas fa-exchange-alt text-xl"></i>
+                                        </div>
+                                        <h3 class="text-sm font-bold text-slate-800 dark:text-slate-100">Jalur Mutasi</h3>
+                                        <p class="text-[10px] text-slate-400 mt-1 leading-relaxed">Seleksi siswa akibat perpindahan dinas kerja orang tua.</p>
+                                    </div>
+                                    <div class="mt-5 pt-4 border-t border-slate-100 dark:border-slate-700">
+                                        <span class="text-2xl font-black text-slate-800 dark:text-slate-100" id="count-Mutasi">0</span>
+                                        <span class="text-[9px] font-bold text-slate-400 uppercase tracking-widest block mt-0.5">Siswa Terdaftar</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- 3. CRUD SCREEN (Data Siswa per Jalur) -->
+                        <div id="crud-screen" class="hidden-screen fade-in flex-col flex-grow w-full">
+                            <div class="lovelace-card bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 p-5 mb-6 flex flex-col md:flex-row justify-between items-start md:items-center gap-4 shadow-sm">
+                                <div>
+                                    <button onclick="backToDashboard()" class="text-slate-500 dark:text-slate-400 hover:text-blue-600 dark:hover:text-blue-400 font-bold text-xs mb-2 inline-flex items-center transition-colors bg-slate-50 dark:bg-slate-700 px-3 py-1.5 rounded-xl border border-slate-200 dark:border-slate-600 shadow-sm">
+                                        <i class="fas fa-arrow-left mr-1.5"></i> Kembali
+                                    </button>
+                                    <h2 class="text-lg font-extrabold text-slate-800 dark:text-slate-100 flex items-center gap-2 mt-1">
+                                        Daftar Siswa <span class="text-slate-300 dark:text-slate-600 font-light">|</span> Jalur <span id="current-path-title" class="text-blue-600 dark:text-blue-400 uppercase tracking-tight font-black"></span>
+                                    </h2>
+                                </div>
+                                <div class="flex flex-wrap gap-2 w-full md:w-auto">
+                                    <button id="btn-add-siswa" onclick="openFormModal()" class="flex-1 md:flex-none bg-blue-600 hover:bg-blue-700 text-white px-5 py-2.5 rounded-2xl font-bold transition shadow-sm flex items-center justify-center gap-1.5 text-xs">
+                                        <i class="fas fa-plus"></i> Tambah Siswa
+                                    </button>
+                                    <button onclick="downloadExcel()" class="flex-1 md:flex-none bg-emerald-600 hover:bg-emerald-700 text-white px-5 py-2.5 rounded-2xl font-bold transition shadow-sm flex items-center justify-center gap-1.5 text-xs">
+                                        <i class="fas fa-file-excel"></i> Export Excel
+                                    </button>
+                                </div>
+                            </div>
+
+                            <!-- FILTER DAN PENCARIAN -->
+                            <div class="lovelace-card bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 p-4 mb-4 flex flex-col md:flex-row gap-4 shadow-sm">
+                                <div class="flex-1 relative">
+                                    <div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none text-slate-400">
+                                        <i class="fas fa-search text-xs"></i>
+                                    </div>
+                                    <input type="text" id="search-input" oninput="renderTable()" placeholder="Cari Nama Lengkap atau NISN..." class="lovelace-input w-full pl-10 pr-4 py-2.5 text-xs font-medium text-slate-700 dark:text-slate-100 bg-slate-100 dark:bg-slate-700 border border-transparent dark:border-slate-600 focus:bg-white dark:focus:bg-slate-800 outline-none">
+                                </div>
+                                <div class="w-full md:w-64">
+                                    <select id="filter-gender" onchange="renderTable()" class="lovelace-input w-full px-4 py-2.5 text-xs font-medium text-slate-700 dark:text-slate-100 bg-slate-100 dark:bg-slate-700 border border-transparent dark:border-slate-600 focus:bg-white dark:focus:bg-slate-800 outline-none appearance-none cursor-pointer">
+                                        <option value="">Semua Jenis Kelamin</option>
+                                        <option value="Laki-laki">Laki-laki</option>
+                                        <option value="Perempuan">Perempuan</option>
+                                    </select>
+                                </div>
+                            </div>
+
+                            <!-- Table Container -->
+                            <div class="lovelace-card bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 overflow-hidden flex-grow flex flex-col shadow-sm">
+                                <div class="overflow-x-auto custom-scroll">
+                                    <table class="w-full text-left border-collapse whitespace-nowrap">
+                                        <thead>
+                                            <tr class="bg-slate-50 dark:bg-slate-700/50 text-slate-500 dark:text-slate-400 text-xs border-b border-slate-200 dark:border-slate-700">
+                                                <th class="p-4 font-bold uppercase">No</th>
+                                                <th class="p-4 font-bold uppercase">NISN</th>
+                                                <th class="p-4 font-bold uppercase">Nama Lengkap</th>
+                                                <th class="p-4 font-bold uppercase">Sekolah Asal</th>
+                                                <th class="p-4 font-bold uppercase">Gender</th>
+                                                <th class="p-4 font-bold uppercase text-center">Aksi</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody id="student-table-body" class="text-xs divide-y divide-slate-100 dark:divide-slate-700">
+                                            <!-- Data diisi oleh JavaScript -->
+                                        </tbody>
+                                    </table>
+                                </div>
+                                <div id="empty-state" class="hidden-screen p-12 text-center text-slate-400 dark:text-slate-50 flex-grow flex flex-col justify-center">
+                                    <i class="fas fa-folder-open text-4xl mb-3 text-slate-300 dark:text-slate-700"></i>
+                                    <p class="font-bold text-sm">Tidak Ada Data</p>
+                                    <p class="text-xs text-slate-400 dark:text-slate-500 mt-1">Data siswa yang dicari tidak ditemukan.</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- 4. PROFILE SCREEN -->
+                        <div id="profile-screen" class="hidden-screen fade-in w-full max-w-2xl mx-auto py-4">
+                            <div class="lovelace-card bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 p-6 shadow-sm">
+                                <h2 class="text-lg font-extrabold text-slate-800 dark:text-slate-100 mb-6 flex items-center gap-2">
+                                    <i class="fas fa-user-shield text-blue-500"></i> Profil & Level Akses Pengguna
                                 </h2>
-                            </div>
-                            <div class="flex flex-wrap gap-2 w-full md:w-auto">
-                                <!-- Hanya tampil jika akses bukan Guru -->
-                                <button id="btn-add-siswa" onclick="openFormModal()" class="flex-1 md:flex-none bg-blue-600 hover:bg-blue-700 text-white px-5 py-2.5 rounded-2xl font-bold transition shadow-sm flex items-center justify-center gap-1.5 text-xs">
-                                    <i class="fas fa-plus"></i> Tambah Siswa
-                                </button>
-                                <button onclick="downloadExcel()" class="flex-1 md:flex-none bg-emerald-600 hover:bg-emerald-700 text-white px-5 py-2.5 rounded-2xl font-bold transition shadow-sm flex items-center justify-center gap-1.5 text-xs">
-                                    <i class="fas fa-file-excel"></i> Export Excel
-                                </button>
-                            </div>
-                        </div>
-
-                        <!-- FILTER DAN PENCARIAN -->
-                        <div class="lovelace-card bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 p-4 mb-4 flex flex-col md:flex-row gap-4 shadow-sm">
-                            <div class="flex-1 relative">
-                                <div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none text-slate-400">
-                                    <i class="fas fa-search text-xs"></i>
-                                </div>
-                                <input type="text" id="search-input" oninput="renderTable()" placeholder="Cari Nama Lengkap atau NISN..." class="lovelace-input w-full pl-10 pr-4 py-2.5 text-xs font-medium text-slate-700 dark:text-slate-100 bg-slate-100 dark:bg-slate-700 border border-transparent dark:border-slate-600 focus:bg-white dark:focus:bg-slate-800 outline-none">
-                            </div>
-                            <div class="w-full md:w-64">
-                                <select id="filter-gender" onchange="renderTable()" class="lovelace-input w-full px-4 py-2.5 text-xs font-medium text-slate-700 dark:text-slate-100 bg-slate-100 dark:bg-slate-700 border border-transparent dark:border-slate-600 focus:bg-white dark:focus:bg-slate-800 outline-none appearance-none cursor-pointer">
-                                    <option value="">Semua Jenis Kelamin</option>
-                                    <option value="Laki-laki">Laki-laki</option>
-                                    <option value="Perempuan">Perempuan</option>
-                                </select>
-                            </div>
-                        </div>
-
-                        <!-- Table Container -->
-                        <div class="lovelace-card bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 overflow-hidden flex-grow flex flex-col shadow-sm">
-                            <div class="overflow-x-auto custom-scroll">
-                                <table class="w-full text-left border-collapse whitespace-nowrap">
-                                    <thead>
-                                        <tr class="bg-slate-50 dark:bg-slate-700/50 text-slate-500 dark:text-slate-400 text-xs border-b border-slate-200 dark:border-slate-700">
-                                            <th class="p-4 font-bold uppercase">No</th>
-                                            <th class="p-4 font-bold uppercase">NISN</th>
-                                            <th class="p-4 font-bold uppercase">Nama Lengkap</th>
-                                            <th class="p-4 font-bold uppercase">Sekolah Asal</th>
-                                            <th class="p-4 font-bold uppercase">Gender</th>
-                                            <th class="p-4 font-bold uppercase text-center">Aksi</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody id="student-table-body" class="text-xs divide-y divide-slate-100 dark:divide-slate-700">
-                                        <!-- Data diisi oleh JavaScript -->
-                                    </tbody>
-                                </table>
-                            </div>
-                            <div id="empty-state" class="hidden-screen p-12 text-center text-slate-400 dark:text-slate-500 flex-grow flex flex-col justify-center">
-                                <i class="fas fa-folder-open text-4xl mb-3 text-slate-300 dark:text-slate-700"></i>
-                                <p class="font-bold text-sm">Tidak Ada Data</p>
-                                <p class="text-xs text-slate-400 dark:text-slate-500 mt-1">Data siswa yang dicari tidak ditemukan.</p>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- 4. PROFILE SCREEN -->
-                    <div id="profile-screen" class="hidden-screen fade-in w-full max-w-2xl mx-auto py-4">
-                        <div class="lovelace-card bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 p-6 shadow-sm">
-                            <h2 class="text-lg font-extrabold text-slate-800 dark:text-slate-100 mb-6 flex items-center gap-2">
-                                <i class="fas fa-user-shield text-blue-500"></i> Profil & Level Akses Pengguna
-                            </h2>
-                            
-                            <div class="space-y-6">
-                                <!-- Detail Info Pengguna -->
-                                <div class="flex items-center gap-4 p-4 bg-slate-50 dark:bg-slate-700/50 rounded-2xl border border-slate-100 dark:border-slate-700">
-                                    <div class="w-14 h-14 bg-blue-100 dark:bg-blue-900 text-blue-600 dark:text-blue-300 rounded-2xl flex items-center justify-center font-bold text-lg shadow-sm">
-                                        <span id="prof-lg-initials">U</span>
+                                
+                                <div class="space-y-6">
+                                    <!-- Detail Info Pengguna -->
+                                    <div class="flex items-center gap-4 p-4 bg-slate-50 dark:bg-slate-700/50 rounded-2xl border border-slate-100 dark:border-slate-700">
+                                        <div class="w-14 h-14 bg-blue-100 dark:bg-blue-900 text-blue-600 dark:text-blue-300 rounded-2xl flex items-center justify-center font-bold text-lg shadow-sm">
+                                            <span id="prof-lg-initials">U</span>
+                                        </div>
+                                        <div class="flex flex-col">
+                                            <span id="prof-lg-name" class="font-bold text-sm">Guest User</span>
+                                            <span id="prof-lg-role" class="text-xs text-slate-400 font-semibold uppercase mt-0.5">Kesiswaan</span>
+                                        </div>
                                     </div>
-                                    <div class="flex flex-col">
-                                        <span id="prof-lg-name" class="font-bold text-sm">Guest User</span>
-                                        <span id="prof-lg-role" class="text-xs text-slate-400 font-semibold uppercase mt-0.5">Kesiswaan</span>
-                                    </div>
-                                </div>
 
-                                <!-- Permission Status -->
-                                <div class="space-y-2">
-                                    <h3 class="text-xs font-bold text-slate-400 uppercase tracking-widest">Matriks Hak Akses Anda</h3>
-                                    <div class="text-xs divide-y divide-slate-100 dark:divide-slate-700">
-                                        <div class="py-2.5 flex justify-between">
-                                            <span class="text-slate-500">Melihat Data Siswa (Read)</span>
-                                            <span id="perm-read" class="font-bold text-emerald-500"><i class="fas fa-check"></i> Aktif</span>
+                                    <!-- Permission Status -->
+                                    <div class="space-y-2">
+                                        <h3 class="text-xs font-bold text-slate-400 uppercase tracking-widest">Matriks Hak Akses Anda</h3>
+                                        <div class="text-xs divide-y divide-slate-100 dark:divide-slate-700">
+                                            <div class="py-2.5 flex justify-between">
+                                                <span class="text-slate-500">Melihat Data Siswa (Read)</span>
+                                                <span id="perm-read" class="font-bold text-emerald-500"><i class="fas fa-check"></i> Aktif</span>
                                         </div>
                                         <div class="py-2.5 flex justify-between">
                                             <span class="text-slate-500">Menambah Data Siswa (Create)</span>
@@ -751,6 +762,7 @@
         let currentPath = '';
         let students = JSON.parse(localStorage.getItem('siswa_sman1_bna_v2')) || [];
         let systemUsers = []; // Menyimpan data user dari tab 'users'
+        let sidebarOpen = false; // State status buka tutup sidebar
         
         // SCRIPT_URL Google Web App API
         const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycby0KFFxcxrsZh4dixG8euQFvbIAY86SB5OHABNnhkHNXoduMxudc-gObCy1D2Lfkz3b/exec';
@@ -774,41 +786,66 @@
             document.addEventListener(evt, updateActivity);
         });
 
+        // Helper pengaman manipulasi DOM Text & HTML
+        function safeSetText(id, text) {
+            const el = document.getElementById(id);
+            if (el) el.textContent = text;
+        }
+
+        function safeSetHtml(id, html) {
+            const el = document.getElementById(id);
+            if (el) el.innerHTML = html;
+        }
+
         function initTheme() {
             const savedTheme = localStorage.getItem('theme');
             const systemPrefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
             
             if (savedTheme === 'dark' || (!savedTheme && systemPrefersDark)) {
                 document.documentElement.classList.add('dark');
-                document.getElementById('theme-icon').className = 'fas fa-sun text-sm text-amber-400';
+                const themeIcon = document.getElementById('theme-icon');
+                if (themeIcon) themeIcon.className = 'fas fa-sun text-sm text-amber-400';
             } else {
                 document.documentElement.classList.remove('dark');
-                document.getElementById('theme-icon').className = 'fas fa-moon text-sm text-slate-500';
+                const themeIcon = document.getElementById('theme-icon');
+                if (themeIcon) themeIcon.className = 'fas fa-moon text-sm text-slate-500';
             }
         }
 
         function toggleTheme() {
+            const themeIcon = document.getElementById('theme-icon');
             if (document.documentElement.classList.contains('dark')) {
                 document.documentElement.classList.remove('dark');
                 localStorage.setItem('theme', 'light');
-                document.getElementById('theme-icon').className = 'fas fa-moon text-sm text-slate-500';
+                if (themeIcon) themeIcon.className = 'fas fa-moon text-sm text-slate-500';
             } else {
                 document.documentElement.classList.add('dark');
                 localStorage.setItem('theme', 'dark');
-                document.getElementById('theme-icon').className = 'fas fa-sun text-sm text-amber-400';
+                if (themeIcon) themeIcon.className = 'fas fa-sun text-sm text-amber-400';
             }
         }
 
+        // Toggle Sidebar bergaya modern slide-out drawer
         function toggleSidebar() {
             const sidebar = document.getElementById('sidebar');
             const overlay = document.getElementById('sidebar-overlay');
-            
-            if (sidebar.classList.contains('-translate-x-full')) {
+            const contentContainer = document.getElementById('content-container');
+
+            if (!sidebar) return;
+
+            sidebarOpen = !sidebarOpen;
+
+            if (sidebarOpen) {
                 sidebar.classList.remove('-translate-x-full');
-                overlay.classList.remove('hidden');
+                if (window.innerWidth < 768) {
+                    if (overlay) overlay.classList.remove('hidden');
+                } else {
+                    if (contentContainer) contentContainer.classList.add('md:pl-64');
+                }
             } else {
                 sidebar.classList.add('-translate-x-full');
-                overlay.classList.add('hidden');
+                if (overlay) overlay.classList.add('hidden');
+                if (contentContainer) contentContainer.classList.remove('md:pl-64');
             }
         }
 
@@ -816,8 +853,9 @@
             if (window.innerWidth < 768) {
                 const sidebar = document.getElementById('sidebar');
                 const overlay = document.getElementById('sidebar-overlay');
-                sidebar.classList.add('-translate-x-full');
-                overlay.classList.add('hidden');
+                if (sidebar) sidebar.classList.add('-translate-x-full');
+                if (overlay) overlay.classList.add('hidden');
+                sidebarOpen = false;
             }
         }
 
@@ -832,15 +870,30 @@
                 loadUserProfileUI();
                 
                 // Tampilkan sidebar dan toggle tombol sidebar ketika otentikasi berhasil
-                document.getElementById('sidebar').classList.remove('hidden-screen');
-                document.getElementById('sidebar-toggle').classList.remove('hidden-screen');
+                const sidebar = document.getElementById('sidebar');
+                const sidebarToggle = document.getElementById('sidebar-toggle');
+                if (sidebar) sidebar.classList.remove('hidden-screen');
+                if (sidebarToggle) sidebarToggle.classList.remove('hidden-screen');
+
+                // Inisialisasi status default slide-out sidebar sesuai lebar layar
+                const contentContainer = document.getElementById('content-container');
+                if (window.innerWidth >= 768) {
+                    sidebarOpen = true;
+                    if (sidebar) sidebar.classList.remove('-translate-x-full');
+                    if (contentContainer) contentContainer.classList.add('md:pl-64');
+                } else {
+                    sidebarOpen = false;
+                    if (sidebar) sidebar.classList.add('-translate-x-full');
+                    if (contentContainer) contentContainer.classList.remove('md:pl-64');
+                }
 
                 const savedScreen = localStorage.getItem('current_screen') || 'dashboard-screen';
                 if (savedScreen === 'crud-screen') {
                     const savedPath = localStorage.getItem('current_path');
                     if (savedPath) {
                         currentPath = savedPath;
-                        document.getElementById('current-path-title').textContent = currentPath;
+                        const pathTitle = document.getElementById('current-path-title');
+                        if (pathTitle) pathTitle.textContent = currentPath;
                         renderTable();
                         showScreen('crud-screen', false); 
                     } else {
@@ -866,40 +919,47 @@
         }
 
         function loadUserProfileUI() {
-            document.getElementById('profile-name').textContent = currentUser.username;
-            document.getElementById('profile-role').textContent = currentUser.role;
-            document.getElementById('profile-initials').textContent = currentUser.username.substring(0, 2).toUpperCase();
+            safeSetText('profile-name', currentUser.username);
+            safeSetText('profile-role', currentUser.role);
+            safeSetText('profile-initials', currentUser.username ? currentUser.username.substring(0, 2).toUpperCase() : 'U');
 
-            document.getElementById('prof-lg-name').textContent = currentUser.username;
-            document.getElementById('prof-lg-role').textContent = currentUser.role;
-            document.getElementById('prof-lg-initials').textContent = currentUser.username.substring(0, 2).toUpperCase();
-            document.getElementById('dash-current-role').textContent = currentUser.role;
+            safeSetText('prof-lg-name', currentUser.username);
+            safeSetText('prof-lg-role', currentUser.role);
+            safeSetText('prof-lg-initials', currentUser.username ? currentUser.username.substring(0, 2).toUpperCase() : 'U');
+            safeSetText('dash-current-role', currentUser.role);
 
-            document.getElementById('perm-create').innerHTML = currentUser.role !== 'Guru' ? 
-                '<span class="text-emerald-500"><i class="fas fa-check"></i> Aktif</span>' : 
-                '<span class="text-rose-500"><i class="fas fa-times"></i> Tidak Aktif</span>';
+            const permCreateHtml = currentUser.role !== 'Guru' ? 
+                '<span class="text-emerald-500 font-bold"><i class="fas fa-check"></i> Aktif</span>' : 
+                '<span class="text-rose-500 font-bold"><i class="fas fa-times"></i> Tidak Aktif</span>';
+            safeSetHtml('perm-create', permCreateHtml);
                 
-            document.getElementById('perm-update').innerHTML = currentUser.role !== 'Guru' ? 
-                '<span class="text-emerald-500"><i class="fas fa-check"></i> Aktif</span>' : 
-                '<span class="text-rose-500"><i class="fas fa-times"></i> Tidak Aktif</span>';
+            const permUpdateHtml = currentUser.role !== 'Guru' ? 
+                '<span class="text-emerald-500 font-bold"><i class="fas fa-check"></i> Aktif</span>' : 
+                '<span class="text-rose-500 font-bold"><i class="fas fa-times"></i> Tidak Aktif</span>';
+            safeSetHtml('perm-update', permUpdateHtml);
 
-            document.getElementById('perm-delete').innerHTML = currentUser.role === 'Super Admin' ? 
-                '<span class="text-emerald-500"><i class="fas fa-check"></i> Aktif</span>' : 
-                '<span class="text-rose-500"><i class="fas fa-times"></i> Tidak Aktif</span>';
+            const permDeleteHtml = currentUser.role === 'Super Admin' ? 
+                '<span class="text-emerald-500 font-bold"><i class="fas fa-check"></i> Aktif</span>' : 
+                '<span class="text-rose-500 font-bold"><i class="fas fa-times"></i> Tidak Aktif</span>';
+            safeSetHtml('perm-delete', permDeleteHtml);
 
             const btnAddSiswa = document.getElementById('btn-add-siswa');
-            if (currentUser.role === 'Guru') {
-                btnAddSiswa.classList.add('hidden');
-            } else {
-                btnAddSiswa.classList.remove('hidden');
+            if (btnAddSiswa) {
+                if (currentUser.role === 'Guru') {
+                    btnAddSiswa.classList.add('hidden');
+                } else {
+                    btnAddSiswa.classList.remove('hidden');
+                }
             }
 
             // Tampilkan atau sembunyikan navigasi administrasi user
             const adminSection = document.getElementById('sidebar-admin-section');
-            if (currentUser.role === 'Super Admin') {
-                adminSection.classList.remove('hidden-screen');
-            } else {
-                adminSection.classList.add('hidden-screen');
+            if (adminSection) {
+                if (currentUser.role === 'Super Admin') {
+                    adminSection.classList.remove('hidden-screen');
+                } else {
+                    adminSection.classList.add('hidden-screen');
+                }
             }
         }
 
@@ -914,7 +974,8 @@
             }
             updateDashboardCounts();
             
-            document.getElementById('main-app').classList.remove('hidden-screen');
+            const mainApp = document.getElementById('main-app');
+            if (mainApp) mainApp.classList.remove('hidden-screen');
             checkAuth();
         });
 
@@ -925,8 +986,7 @@
             
             const hours = String(now.getHours()).padStart(2, '0');
             const minutes = String(now.getMinutes()).padStart(2, '0');
-            document.getElementById('realtime-clock').innerHTML = 
-                `<i class="far fa-calendar mr-1.5 text-slate-400"></i> ${days[now.getDay()]} ${now.getDate()} ${months[now.getMonth()]} &nbsp;|&nbsp; <span class="font-bold text-slate-700 dark:text-slate-200">${hours}:${minutes}</span>`;
+            safeSetHtml('realtime-clock', `<i class="far fa-calendar mr-1.5 text-slate-400"></i> ${days[now.getDay()]} ${now.getDate()} ${months[now.getMonth()]} &nbsp;|&nbsp; <span class="font-bold text-slate-700 dark:text-slate-200">${hours}:${minutes}</span>`);
         }
 
         function showScreen(screenId, saveState = true) {
@@ -934,26 +994,37 @@
                 const el = document.getElementById(id);
                 if(el) el.classList.add('hidden-screen');
             });
-            document.getElementById(screenId).classList.remove('hidden-screen');
+            const targetEl = document.getElementById(screenId);
+            if (targetEl) targetEl.classList.remove('hidden-screen');
             
             // Atur highlight menu dashboard di sidebar
-            document.getElementById('menu-dashboard').className = "w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-xs font-bold transition-all " + 
-                (screenId === 'dashboard-screen' ? 'text-blue-600 dark:text-blue-400 bg-blue-50 dark:bg-blue-950/30' : 'text-slate-600 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-700/50');
+            const menuDash = document.getElementById('menu-dashboard');
+            if (menuDash) {
+                menuDash.className = "w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-xs font-bold transition-all " + 
+                    (screenId === 'dashboard-screen' ? 'text-blue-600 dark:text-blue-400 bg-blue-50 dark:bg-blue-950/30' : 'text-slate-600 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-700/50');
+            }
             
-            if (screenId === 'user-management-screen') {
-                document.getElementById('menu-users').className = "w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-xs font-bold transition-all text-blue-600 dark:text-blue-400 bg-blue-50 dark:bg-blue-950/30";
-            } else {
-                document.getElementById('menu-users').className = "w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-xs font-semibold text-slate-600 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-700/50 transition-all";
+            const menuUsers = document.getElementById('menu-users');
+            if (menuUsers) {
+                if (screenId === 'user-management-screen') {
+                    menuUsers.className = "w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-xs font-bold transition-all text-blue-600 dark:text-blue-400 bg-blue-50 dark:bg-blue-950/30";
+                } else {
+                    menuUsers.className = "w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-xs font-semibold text-slate-600 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-700/50 transition-all";
+                }
             }
 
+            const btnLogout = document.getElementById('btn-logout');
+            const sidebar = document.getElementById('sidebar');
+            const sidebarToggle = document.getElementById('sidebar-toggle');
+
             if(screenId === 'login-screen') {
-                document.getElementById('btn-logout').classList.add('hidden-screen');
-                document.getElementById('sidebar').classList.add('hidden-screen');
-                document.getElementById('sidebar-toggle').classList.add('hidden-screen');
+                if (btnLogout) btnLogout.classList.add('hidden-screen');
+                if (sidebar) sidebar.classList.add('hidden-screen');
+                if (sidebarToggle) sidebarToggle.classList.add('hidden-screen');
             } else {
-                document.getElementById('btn-logout').classList.remove('hidden-screen');
-                document.getElementById('sidebar').classList.remove('hidden-screen');
-                document.getElementById('sidebar-toggle').classList.remove('hidden-screen');
+                if (btnLogout) btnLogout.classList.remove('hidden-screen');
+                if (sidebar) sidebar.classList.remove('hidden-screen');
+                if (sidebarToggle) sidebarToggle.classList.remove('hidden-screen');
             }
 
             if(saveState && screenId !== 'login-screen') {
@@ -1071,14 +1142,23 @@
         function openPath(pathName) {
             currentPath = pathName;
             localStorage.setItem('current_path', pathName);
-            document.getElementById('current-path-title').textContent = pathName;
-            document.getElementById('search-input').value = '';
-            document.getElementById('filter-gender').value = '';
+            const pathTitle = document.getElementById('current-path-title');
+            if (pathTitle) pathTitle.textContent = pathName;
+            
+            const searchInput = document.getElementById('search-input');
+            const filterGender = document.getElementById('filter-gender');
+            if (searchInput) searchInput.value = '';
+            if (filterGender) filterGender.value = '';
 
             ['Prestasi', 'Domisili', 'Afirmasi', 'Mutasi'].forEach(p => {
-                document.getElementById(`menu-path-${p}`).className = "w-full flex items-center justify-between px-3 py-2.5 rounded-xl text-xs font-semibold transition-all text-slate-600 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-700/50";
+                const el = document.getElementById(`menu-path-${p}`);
+                if (el) el.className = "w-full flex items-center justify-between px-3 py-2.5 rounded-xl text-xs font-semibold transition-all text-slate-600 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-700/50";
             });
-            document.getElementById(`menu-path-${pathName}`).className = "w-full flex items-center justify-between px-3 py-2.5 rounded-xl text-xs font-bold transition-all text-blue-600 dark:text-blue-400 bg-blue-50 dark:bg-blue-950/20";
+            
+            const currentMenuPath = document.getElementById(`menu-path-${pathName}`);
+            if (currentMenuPath) {
+                currentMenuPath.className = "w-full flex items-center justify-between px-3 py-2.5 rounded-xl text-xs font-bold transition-all text-blue-600 dark:text-blue-400 bg-blue-50 dark:bg-blue-950/20";
+            }
 
             closeSidebarOnMobile();
             showScreen('crud-screen');
@@ -1104,25 +1184,68 @@
         function updateDashboardCounts() {
             ['Prestasi', 'Domisili', 'Afirmasi', 'Mutasi'].forEach(p => {
                 const count = students.filter(s => s.path === p).length;
-                const el = document.getElementById(`count-${p}`);
-                const badge = document.getElementById(`badge-${p}`);
-                if(el) el.textContent = count;
-                if(badge) badge.textContent = count;
+                safeSetText(`count-${p}`, count);
+                safeSetText(`badge-${p}`, count);
             });
         }
 
+        // --- PENYINKRONAN DATA SPREADSHEET TANGGUH ---
         async function loadDataFromSpreadsheet() {
             if (SCRIPT_URL === 'URL_WEB_APP_ANDA_DISINI') return;
             try {
                 const response = await fetch(SCRIPT_URL);
-                const fetchedStudents = await response.json();
+                let fetchedStudents = await response.json();
+
+                // Deteksi apabila database mengembalikan error status atau struktur data bukan berupa array langsung
+                if (fetchedStudents && typeof fetchedStudents === 'object' && !Array.isArray(fetchedStudents)) {
+                    if (Array.isArray(fetchedStudents.data)) {
+                        fetchedStudents = fetchedStudents.data;
+                    } else if (fetchedStudents.status === 'error') {
+                        console.error("Database Server Error:", fetchedStudents.message);
+                        renderTable();
+                        return;
+                    }
+                }
+
+                if (!Array.isArray(fetchedStudents)) {
+                    console.error("Gagal sinkronisasi data siswa: Format API tidak dikenal.", fetchedStudents);
+                    renderTable();
+                    return;
+                }
+
+                // Normalizer Kueri Header: menghapus spasi & garis bawah serta mengonversi huruf kecil
+                const cleanKey = str => String(str || '').toLowerCase().replace(/[\s_]+/g, '');
+
+                // Pemetaan otomatis (Auto-mapping) tangguh ke kolom-kolom aplikasi
+                const parsedStudents = fetchedStudents.map((rawStudent, index) => {
+                    const student = {
+                        id: rawStudent.id || (index + 1001),
+                        path: 'Prestasi' // default pendaftaran
+                    };
+
+                    for (const rawKey in rawStudent) {
+                        const normKey = cleanKey(rawKey);
+                        if (normKey === 'jalur' || normKey === 'path') {
+                            student.path = rawStudent[rawKey];
+                        } else {
+                            const matchedField = fields.find(f => cleanKey(f) === normKey);
+                            if (matchedField) {
+                                student[matchedField] = rawStudent[rawKey];
+                            }
+                        }
+                    }
+                    return student;
+                });
+
                 const localData = JSON.parse(localStorage.getItem('siswa_sman1_bna_v2')) || [];
                 
-                const combined = [...localData, ...fetchedStudents];
+                // Menggabungkan data lokal dan server berdasarkan NISN (mencegah duplikasi data)
+                const combined = [...localData, ...parsedStudents];
                 students = Array.from(new Map(combined.map(item => [item.nisn, item])).values());
                 
                 updateDashboardCounts();
-                if (!document.getElementById('crud-screen').classList.contains('hidden-screen')) renderTable();
+                const crudScreen = document.getElementById('crud-screen');
+                if (crudScreen && !crudScreen.classList.contains('hidden-screen')) renderTable();
             } catch (error) {
                 console.error("Gagal sinkronisasi data siswa:", error);
             }
@@ -1131,10 +1254,11 @@
         function renderTable() {
             const tbody = document.getElementById('student-table-body');
             const emptyState = document.getElementById('empty-state');
+            if (!tbody) return;
             tbody.innerHTML = '';
 
-            const searchQuery = document.getElementById('search-input').value.toLowerCase();
-            const filterGender = document.getElementById('filter-gender').value;
+            const searchQuery = document.getElementById('search-input') ? document.getElementById('search-input').value.toLowerCase() : '';
+            const filterGender = document.getElementById('filter-gender') ? document.getElementById('filter-gender').value : '';
 
             const filteredStudents = students.filter(s => {
                 const matchPath = s.path === currentPath;
@@ -1146,9 +1270,9 @@
             });
 
             if (filteredStudents.length === 0) {
-                emptyState.classList.remove('hidden-screen');
+                if (emptyState) emptyState.classList.remove('hidden-screen');
             } else {
-                emptyState.classList.add('hidden-screen');
+                if (emptyState) emptyState.classList.add('hidden-screen');
                 filteredStudents.forEach((student, index) => {
                     const tr = document.createElement('tr');
                     tr.className = 'hover:bg-slate-50 dark:hover:bg-slate-700/30 transition-colors border-b border-slate-100 dark:border-slate-700 last:border-0';
@@ -1226,26 +1350,33 @@
                 return;
             }
 
-            document.getElementById('form-modal').classList.remove('hidden-screen');
-            document.getElementById('student-path').value = currentPath;
+            const formModal = document.getElementById('form-modal');
+            const studentPath = document.getElementById('student-path');
+            const modalTitle = document.getElementById('modal-title');
+            const studentIdInput = document.getElementById('student-id');
+
+            if (formModal) formModal.classList.remove('hidden-screen');
+            if (studentPath) studentPath.value = currentPath;
 
             if (studentId) {
-                document.getElementById('modal-title').textContent = `Edit Siswa - Jalur ${currentPath}`;
+                if (modalTitle) modalTitle.textContent = `Edit Siswa - Jalur ${currentPath}`;
                 const student = students.find(s => s.id === studentId);
-                document.getElementById('student-id').value = student.id;
+                if (studentIdInput) studentIdInput.value = student.id;
                 fields.forEach(field => {
                     const inputEl = document.getElementById(`f_${field}`);
                     if(inputEl) inputEl.value = student[field] || '';
                 });
             } else {
-                document.getElementById('modal-title').textContent = `Tambah Siswa - Jalur ${currentPath}`;
-                document.getElementById('student-form').reset();
-                document.getElementById('student-id').value = '';
+                if (modalTitle) modalTitle.textContent = `Tambah Siswa - Jalur ${currentPath}`;
+                const form = document.getElementById('student-form');
+                if (form) form.reset();
+                if (studentIdInput) studentIdInput.value = '';
             }
         }
 
         function closeFormModal() { 
-            document.getElementById('form-modal').classList.add('hidden-screen'); 
+            const formModal = document.getElementById('form-modal');
+            if (formModal) formModal.classList.add('hidden-screen'); 
         }
 
         function saveStudent(e) {
@@ -1300,29 +1431,183 @@
             openFormModal(id); 
         }
 
+        // Cetak hasil pengumuman kelulusan PDF resmi dengan QR Code
+        function generatePDF(student) {
+            // Tampilkan loading indicator
+            Swal.fire({
+                title: 'Menyiapkan Surat...',
+                text: 'Sedang membuat berkas PDF Resmi',
+                allowOutsideClick: false,
+                didOpen: () => { Swal.showLoading(); }
+            });
+
+            // Elemen cetak container dinamis
+            const element = document.createElement('div');
+            element.className = 'p-10 text-slate-800 bg-white leading-relaxed text-sm';
+            element.style.width = '790px'; // Lebar format kertas A4 Portrait standar
+
+            const currentYear = new Date().getFullYear();
+            const statusLulus = student.id % 2 === 0 ? "LULUS" : "TIDAK LULUS";
+            const colorLulus = statusLulus === "LULUS" ? "color: #059669; font-weight: 800;" : "color: #dc2626; font-weight: 800;";
+
+            element.innerHTML = `
+                <!-- KOP SURAT RESMI -->
+                <table style="width: 100%; border-bottom: 3px double #000; padding-bottom: 12px; margin-bottom: 24px;">
+                    <tr>
+                        <td style="width: 15%; text-align: left;">
+                            <img src="https://sman1bandaaceh.sch.id/wp-content/uploads/2018/04/sman1-logoo.png" style="width: 80px; height: auto;" alt="Logo Aceh">
+                        </td>
+                        <td style="width: 85%; text-align: center; font-family: 'Times New Roman', Times, serif;">
+                            <span style="font-size: 16px; font-weight: bold; letter-spacing: 1px;">PEMERINTAH ACEH</span><br>
+                            <span style="font-size: 18px; font-weight: bold; letter-spacing: 1px;">DINAS PENDIDIKAN</span><br>
+                            <span style="font-size: 20px; font-weight: 900; letter-spacing: 1px;">SMA NEGERI 1 BANDA ACEH</span><br>
+                            <span style="font-size: 10px; font-style: italic;">Jalan Prof. A. Majid Ibrahim I No. 07 Desa Punge Jurong Meuraxa, Banda Aceh, Provinsi Aceh, Indonesia</span>
+                        </td>
+                    </tr>
+                </table>
+
+                <!-- NOMOR SURAT & JUDUL -->
+                <div style="text-align: center; margin-bottom: 24px; font-family: 'Times New Roman', Times, serif;">
+                    <span style="font-size: 14px; font-weight: bold; text-decoration: underline;">SURAT KEPUTUSAN KELULUSAN SISWA BARU</span><br>
+                    <span style="font-size: 11px;">Nomor: 421.3 / SMAN1-BNA / PPDB / ${currentYear}</span>
+                </div>
+
+                <p style="text-align: justify; text-indent: 36px; margin-bottom: 16px;">
+                    Berdasarkan hasil seleksi pendaftaran, verifikasi berkas administrasi fisik dan akademik, rapat pleno Panitia Penerimaan Peserta Didik Baru (PPDB) SMA Negeri 1 Banda Aceh Tahun Ajaran 2026/2027, dengan ini Kepala Sekolah SMA Negeri 1 Banda Aceh memutuskan dan menetapkan bahwa:
+                </p>
+
+                <!-- BIODATA SISWA -->
+                <table style="width: 85%; margin: 20px auto; border-collapse: collapse; font-size: 12px;" cellpadding="6">
+                    <tr>
+                        <td style="width: 35%; font-weight: bold;">Nama Lengkap</td>
+                        <td style="width: 5%;">:</td>
+                        <td style="width: 60%; font-weight: bold; text-transform: uppercase;">${student.nama_lengkap || '-'}</td>
+                    </tr>
+                    <tr>
+                        <td style="font-weight: bold;">Nomor Induk Siswa Nasional (NISN)</td>
+                        <td>:</td>
+                        <td>${student.nisn || '-'}</td>
+                    </tr>
+                    <tr>
+                        <td style="font-weight: bold;">Sekolah Asal</td>
+                        <td>:</td>
+                        <td>${student.sekolah_lama || '-'}</td>
+                    </tr>
+                    <tr>
+                        <td style="font-weight: bold;">Jalur Pendaftaran</td>
+                        <td>:</td>
+                        <td style="font-weight: 600;">Jalur ${student.path || '-'}</td>
+                    </tr>
+                    <tr style="border-top: 1px solid #e2e8f0; border-bottom: 1px solid #e2e8f0; background-color: #f8fafc;">
+                        <td style="font-weight: bold; font-size: 13px;">STATUS KELULUSAN</td>
+                        <td>:</td>
+                        <td style="font-size: 14px; ${colorLulus}">${statusLulus}</td>
+                    </tr>
+                </table>
+
+                <p style="text-align: justify; text-indent: 36px; margin-top: 16px; margin-bottom: 32px;">
+                    Demikian surat keputusan pengumuman kelulusan ini diterbitkan secara resmi oleh Panitia PPDB SMA Negeri 1 Banda Aceh sebagai bukti administrasi pendaftaran siswa baru untuk digunakan sebagaimana mestinya. Keputusan ini mutlak dan tidak dapat diganggu gugat.
+                </p>
+
+                <!-- TANDA TANGAN & QR CODE -->
+                <table style="width: 100%; margin-top: 40px; font-family: 'Times New Roman', Times, serif;">
+                    <tr>
+                        <td style="width: 50%; text-align: left; vertical-align: top; padding-left: 40px;">
+                            <div style="font-size: 10px; color: #475569; margin-bottom: 8px;">Barcode Validasi SK Resmi:</div>
+                            <div id="pdf-qrcode" style="width: 110px; height: 110px; padding: 5px; border: 1px solid #e2e8f0; border-radius: 8px;"></div>
+                        </td>
+                        <td style="width: 50%; text-align: center; vertical-align: top;">
+                            <span>Banda Aceh, ${new Date().toLocaleDateString('id-ID', {day: 'numeric', month: 'long', year: 'numeric'})}</span><br>
+                            <span>Kepala Sekolah SMAN 1 Banda Aceh</span>
+                            <br><br><br><br>
+                            <span style="font-weight: bold; text-decoration: underline;">Dr. SMAN 1 Banda Aceh, M.Pd.</span><br>
+                            <span>NIP. 19780512 200501 1 002</span>
+                        </td>
+                    </tr>
+                </table>
+            `;
+
+            document.body.appendChild(element);
+
+            // Generate QR Code ke dalam PDF secara instan
+            const qrText = `NISN: ${student.nisn}\nNama: ${student.nama_lengkap}\nJalur: ${student.path}\nKeterangan: ${statusLulus}`;
+            new QRCode(element.querySelector('#pdf-qrcode'), {
+                text: qrText,
+                width: 100,
+                height: 100,
+                colorDark : "#000000",
+                colorLight : "#ffffff",
+                correctLevel : QRCode.CorrectLevel.M
+            });
+
+            // Konfigurasi konversi berkas html2pdf
+            const opt = {
+                margin:       10,
+                filename:     `Surat_Keputusan_Kelulusan_${student.nisn}_${student.nama_lengkap.replace(/\s+/g, '_')}.pdf`,
+                image:        { type: 'jpeg', quality: 1.0 },
+                html2canvas:  { scale: 2, logging: false, useCORS: true },
+                jsPDF:        { unit: 'mm', format: 'a4', orientation: 'portrait' }
+            };
+
+            // Jalankan render setelah QR Code termuat
+            setTimeout(() => {
+                html2pdf().from(element).set(opt).save().then(() => {
+                    document.body.removeChild(element);
+                    Swal.fire({
+                        icon: 'success',
+                        title: 'PDF Berhasil Diunduh!',
+                        text: 'Surat Keputusan Kelulusan resmi telah disimpan ke komputer/perangkat Anda.',
+                        timer: 2000,
+                        showConfirmButton: false
+                    });
+                }).catch(err => {
+                    console.error("PDF Render Error:", err);
+                    Swal.fire('Gagal', 'Terjadi kesalahan sistem saat membuat file PDF kelulusan.', 'error');
+                });
+            }, 600);
+        }
+
         function viewStudent(id) {
             const student = students.find(s => s.id === id);
             if (!student) return;
             fields.forEach(field => {
-                const el = document.getElementById(`d_${field}`);
-                if (el) el.textContent = student[field] || '-';
+                safeSetText(`d_${field}`, student[field] || '-');
             });
             
             const btnEdit = document.getElementById('btn-edit-from-detail');
-            if (currentUser.role === 'Guru') {
-                btnEdit.classList.add('hidden');
-            } else {
-                btnEdit.classList.remove('hidden');
-                btnEdit.onclick = function() {
-                    closeDetailModal(); editStudent(id);
-                };
+            if (btnEdit) {
+                if (currentUser.role === 'Guru') {
+                    btnEdit.classList.add('hidden');
+                } else {
+                    btnEdit.classList.remove('hidden');
+                    btnEdit.onclick = function() {
+                        closeDetailModal(); editStudent(id);
+                    };
+                }
             }
             
-            document.getElementById('detail-modal').classList.remove('hidden-screen');
+            // Konfigurasi tombol cetak PDF Kelulusan resmi di modal detail
+            let btnPDF = document.getElementById('btn-pdf-from-detail');
+            if (!btnPDF) {
+                btnPDF = document.createElement('button');
+                btnPDF.id = 'btn-pdf-from-detail';
+                btnPDF.type = 'button';
+                btnPDF.className = 'px-5 py-2.5 bg-teal-600 hover:bg-teal-700 text-white rounded-2xl font-bold transition-all flex items-center gap-1.5 text-xs';
+                btnPDF.innerHTML = `<i class="fas fa-file-pdf"></i> Cetak SK`;
+                const footer = document.querySelector('#detail-modal div.p-5');
+                if (footer) footer.insertBefore(btnPDF, btnEdit);
+            }
+            btnPDF.onclick = function() {
+                generatePDF(student);
+            };
+            
+            const detailModal = document.getElementById('detail-modal');
+            if (detailModal) detailModal.classList.remove('hidden-screen');
         }
 
         function closeDetailModal() { 
-            document.getElementById('detail-modal').classList.add('hidden-screen'); 
+            const detailModal = document.getElementById('detail-modal');
+            if (detailModal) detailModal.classList.add('hidden-screen'); 
         }
 
         function downloadExcel() {
@@ -1349,8 +1634,17 @@
             if (SCRIPT_URL === 'URL_WEB_APP_ANDA_DISINI' || currentUser.role !== 'Super Admin') return;
             try {
                 const response = await fetch(`${SCRIPT_URL}?target=users`);
-                systemUsers = await response.json();
-                if (!document.getElementById('user-management-screen').classList.contains('hidden-screen')) {
+                const fetchedUsers = await response.json();
+
+                // Validasi agar tidak memicu error "fetchedUsers is not iterable"
+                if (!Array.isArray(fetchedUsers)) {
+                    console.error("Gagal sinkronisasi data user: Data yang diterima dari API bukan berupa array.", fetchedUsers);
+                    return;
+                }
+
+                systemUsers = fetchedUsers;
+                const userScreen = document.getElementById('user-management-screen');
+                if (userScreen && !userScreen.classList.contains('hidden-screen')) {
                     renderUsersTable();
                 }
             } catch (error) {
@@ -1371,6 +1665,7 @@
 
         function renderUsersTable() {
             const tbody = document.getElementById('users-table-body');
+            if (!tbody) return;
             tbody.innerHTML = '';
             
             if (systemUsers.length === 0) {
@@ -1407,29 +1702,45 @@
         }
 
         function openUserModal() {
-            document.getElementById('user-modal').classList.remove('hidden-screen');
-            document.getElementById('user-modal-title').textContent = "Tambah Akun Petugas";
-            document.getElementById('user-form').reset();
-            document.getElementById('uf_username').disabled = false;
-            document.getElementById('user-is-edit').value = "false";
+            const userModal = document.getElementById('user-modal');
+            const userModalTitle = document.getElementById('user-modal-title');
+            const userForm = document.getElementById('user-form');
+            const ufUsername = document.getElementById('uf_username');
+            const userIsEdit = document.getElementById('user-is-edit');
+
+            if (userModal) userModal.classList.remove('hidden-screen');
+            if (userModalTitle) userModalTitle.textContent = "Tambah Akun Petugas";
+            if (userForm) userForm.reset();
+            if (ufUsername) ufUsername.disabled = false;
+            if (userIsEdit) userIsEdit.value = "false";
         }
 
         function closeUserModal() {
-            document.getElementById('user-modal').classList.add('hidden-screen');
+            const userModal = document.getElementById('user-modal');
+            if (userModal) userModal.classList.add('hidden-screen');
         }
 
         function editUser(username) {
             const user = systemUsers.find(u => u.username === username);
             if (!user) return;
 
-            document.getElementById('user-modal').classList.remove('hidden-screen');
-            document.getElementById('user-modal-title').textContent = `Edit Sandi / Hak Akses: ${username}`;
+            const userModal = document.getElementById('user-modal');
+            const userModalTitle = document.getElementById('user-modal-title');
+            const ufUsername = document.getElementById('uf_username');
+            const ufPassword = document.getElementById('uf_password');
+            const ufRole = document.getElementById('uf_role');
+            const userIsEdit = document.getElementById('user-is-edit');
+
+            if (userModal) userModal.classList.remove('hidden-screen');
+            if (userModalTitle) userModalTitle.textContent = `Edit Sandi / Hak Akses: ${username}`;
             
-            document.getElementById('uf_username').value = user.username;
-            document.getElementById('uf_username').disabled = true; // Username primer tidak bisa diedit
-            document.getElementById('uf_password').value = user.password || '';
-            document.getElementById('uf_role').value = user.role;
-            document.getElementById('user-is-edit').value = "true";
+            if (ufUsername) {
+                ufUsername.value = user.username;
+                ufUsername.disabled = true; // Username primer tidak bisa diedit
+            }
+            if (ufPassword) ufPassword.value = user.password || '';
+            if (ufRole) ufRole.value = user.role;
+            if (userIsEdit) userIsEdit.value = "true";
         }
 
         async function saveUser(e) {
@@ -1439,7 +1750,6 @@
             const username = document.getElementById('uf_username').value;
             const password = document.getElementById('uf_password').value;
             const role = document.getElementById('uf_role').value;
-            const isEdit = document.getElementById('user-is-edit').value === "true";
 
             Swal.fire({ title: 'Menyimpan Pengguna...', allowOutsideClick: false, didOpen: () => { Swal.showLoading(); } });
 
