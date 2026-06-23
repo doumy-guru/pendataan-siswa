@@ -92,7 +92,7 @@
                 
                 <!-- Sisi Kiri: Toggle Sidebar & Logo -->
                 <div class="flex items-center gap-3">
-                    <button id="sidebar-toggle" onclick="toggleSidebar()" class="p-2 text-slate-500 hover:text-blue-600 hover:bg-slate-100 dark:hover:bg-slate-700 rounded-xl transition-all">
+                    <button id="sidebar-toggle" onclick="toggleSidebar()" class="p-2 text-slate-500 hover:text-blue-600 hover:bg-slate-100 dark:hover:bg-slate-700 rounded-xl transition-all hidden-screen">
                         <i class="fas fa-bars text-lg"></i>
                     </button>
                     
@@ -131,7 +131,8 @@
         <!-- APP CONTENT LAYOUT -->
         <div class="flex flex-1 relative">
             
-            <aside id="sidebar" class="bg-white dark:bg-slate-800 border-r border-slate-200 dark:border-slate-700 w-64 fixed md:sticky top-[61px] bottom-0 left-0 z-30 transform -translate-x-full md:translate-x-0 transition-transform duration-300 ease-in-out flex flex-col justify-between shadow-sm">
+            <!-- Sidebar: Ditambahkan class 'hidden-screen' agar disembunyikan secara bawaan saat belum login -->
+            <aside id="sidebar" class="bg-white dark:bg-slate-800 border-r border-slate-200 dark:border-slate-700 w-64 fixed md:sticky top-[61px] bottom-0 left-0 z-30 transform -translate-x-full md:translate-x-0 transition-transform duration-300 ease-in-out flex flex-col justify-between shadow-sm hidden-screen">
                 <div class="p-4 space-y-6">
                     <!-- User Mini Profile -->
                     <div onclick="openProfileScreen()" class="p-3 bg-slate-50 dark:bg-slate-700/50 hover:bg-blue-50 dark:hover:bg-slate-700 rounded-2xl border border-slate-100 dark:border-slate-700 flex items-center gap-3 cursor-pointer transition-all">
@@ -205,20 +206,30 @@
                                 <div class="w-16 h-16 bg-blue-50 dark:bg-blue-950 text-blue-600 dark:text-blue-400 mx-auto rounded-2xl flex items-center justify-center mb-4 border border-blue-100 dark:border-blue-900">
                                     <i class="fas fa-user-shield text-2xl"></i>
                                 </div>
-                                <h2 class="text-2xl font-extrabold text-slate-800 dark:text-slate-100 tracking-tight">Otentikasi Petugas</h2>
-                                <p class="text-xs text-slate-500 dark:text-slate-400 mt-1 font-medium">Gunakan Kredensial Kesiswaan untuk masuk</p>
+                                <h2 class="text-2xl font-extrabold text-slate-800 dark:text-slate-100 tracking-tight">Otentikasi</h2>
+                                <p class="text-sm text-slate-500 mt-2 font-medium">Silakan masuk menggunakan kredensial Anda</p>
                             </div>
                             <form onsubmit="handleLogin(event)" class="space-y-4">
                                 <div>
-                                    <label class="block text-xs font-bold text-slate-500 dark:text-slate-400 mb-1 uppercase tracking-wide">Username</label>
-                                    <input type="text" id="username" required class="lovelace-input w-full px-4 py-3 text-sm text-slate-800 dark:text-slate-100 bg-slate-50 dark:bg-slate-700 border border-transparent dark:border-slate-600 focus:bg-white dark:focus:bg-slate-800 focus:border-blue-500 outline-none transition-all" placeholder="admin">
+                                    <label class="block text-xs font-bold text-slate-600 mb-1.5 uppercase tracking-wide">Username</label>
+                                    <div class="relative">
+                                        <div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none text-slate-400">
+                                            <i class="fas fa-user"></i>
+                                        </div>
+                                        <input type="text" id="username" required class="lovelace-input w-full pl-10 pr-4 py-3 text-sm text-slate-800 dark:text-slate-100 bg-slate-50 dark:bg-slate-700 border border-transparent dark:border-slate-600 focus:bg-white dark:focus:bg-slate-800 focus:border-blue-500 outline-none transition-all" placeholder="admin">
+                                    </div>
                                 </div>
                                 <div>
                                     <label class="block text-xs font-bold text-slate-500 dark:text-slate-400 mb-1 uppercase tracking-wide">Password</label>
-                                    <input type="password" id="password" required class="lovelace-input w-full px-4 py-3 text-sm text-slate-800 dark:text-slate-100 bg-slate-50 dark:bg-slate-700 border border-transparent dark:border-slate-600 focus:bg-white dark:focus:bg-slate-800 focus:border-blue-500 outline-none transition-all" placeholder="••••••••">
+                                    <div class="relative">
+                                        <div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none text-slate-400">
+                                            <i class="fas fa-lock"></i>
+                                        </div>
+                                        <input type="password" id="password" required class="lovelace-input w-full pl-10 pr-4 py-3 text-sm text-slate-800 dark:text-slate-100 bg-slate-50 dark:bg-slate-700 border border-transparent dark:border-slate-600 focus:bg-white dark:focus:bg-slate-800 focus:border-blue-500 outline-none transition-all" placeholder="••••••••">
+                                    </div>
                                 </div>
-                                <button type="submit" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 rounded-2xl transition shadow-sm border border-blue-500/20 mt-2">
-                                    Masuk <i class="fas fa-arrow-right ml-1"></i>
+                                <button type="submit" class="w-full bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white font-bold py-3.5 rounded-xl transition-all shadow-lg shadow-blue-500/30 border border-white/20 mt-2 hover:scale-[1.02]">
+                                    Masuk ke Sistem <i class="fas fa-arrow-right ml-2"></i>
                                 </button>
                             </form>
                         </div>
@@ -226,14 +237,9 @@
 
                     <!-- 2. DASHBOARD SCREEN -->
                     <div id="dashboard-screen" class="hidden-screen fade-in w-full">
-                        <div class="mb-6 lovelace-card bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 p-6 flex flex-col md:flex-row justify-between items-center gap-4">
-                            <div class="text-center md:text-left">
-                                <h2 class="text-xl font-extrabold text-slate-800 dark:text-slate-100 tracking-tight">Selamat Datang kembali!</h2>
-                                <p class="text-slate-500 dark:text-slate-400 text-xs mt-1 font-medium">Pilih salah satu jalur pendaftaran di bawah ini atau melalui menu sidebar.</p>
-                            </div>
-                            <div class="text-xs bg-slate-50 dark:bg-slate-700 px-3.5 py-2 rounded-xl border border-slate-100 dark:border-slate-600 font-bold flex items-center gap-2">
-                                <i class="fas fa-shield-alt text-blue-500"></i> Akun aktif: <span id="dash-current-role" class="text-blue-600 dark:text-blue-400">Loading...</span>
-                            </div>
+                        <div class="mb-8 mt-4 text-center md:text-left bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 p-6 rounded-2xl">
+                            <h2 class="text-xl font-extrabold text-slate-800 dark:text-slate-100 tracking-tight">Dashboard Pendataan</h2>
+                            <p class="text-slate-500 dark:text-slate-400 text-xs mt-1 font-medium">Pilih salah satu jalur pendaftaran di bawah ini atau melalui menu sidebar.</p>
                         </div>
 
                         <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
@@ -255,10 +261,10 @@
                             <div onclick="openPath('Domisili')" class="lovelace-card bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 p-6 hover:shadow-lg dark:hover:shadow-slate-950/20 hover:-translate-y-1 cursor-pointer text-center group flex flex-col justify-between h-full">
                                 <div>
                                     <div class="w-14 h-14 bg-emerald-50 dark:bg-emerald-950/40 text-emerald-600 dark:text-emerald-400 border border-emerald-100 dark:border-emerald-900 mx-auto rounded-2xl flex items-center justify-center mb-4 transition-transform duration-300">
-                                        <i class="fas fa-map-marker-alt text-xl"></i>
+                                        <i class="fas fa-map-marker-alt text-2xl text-emerald-600"></i>
                                     </div>
                                     <h3 class="text-sm font-bold text-slate-800 dark:text-slate-100">Jalur Domisili</h3>
-                                    <p class="text-[10px] text-slate-400 mt-1 leading-relaxed">Seleksi berdasarkan titik zonasi domisili pendaftar.</p>
+                                    <p class="text-[10px] text-slate-400 mt-1 leading-relaxed">Berdasarkan jarak zonasi.</p>
                                 </div>
                                 <div class="mt-5 pt-4 border-t border-slate-100 dark:border-slate-700">
                                     <span class="text-2xl font-black text-slate-800 dark:text-slate-100" id="count-Domisili">0</span>
@@ -269,14 +275,14 @@
                             <div onclick="openPath('Afirmasi')" class="lovelace-card bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 p-6 hover:shadow-lg dark:hover:shadow-slate-950/20 hover:-translate-y-1 cursor-pointer text-center group flex flex-col justify-between h-full">
                                 <div>
                                     <div class="w-14 h-14 bg-blue-50 dark:bg-blue-950/40 text-blue-600 dark:text-blue-400 border border-blue-100 dark:border-blue-900 mx-auto rounded-2xl flex items-center justify-center mb-4 transition-transform duration-300">
-                                        <i class="fas fa-hands-helping text-xl"></i>
+                                        <i class="fas fa-hands-helping text-2xl text-blue-600"></i>
                                     </div>
                                     <h3 class="text-sm font-bold text-slate-800 dark:text-slate-100">Jalur Afirmasi</h3>
-                                    <p class="text-[10px] text-slate-400 mt-1 leading-relaxed">Bagi pendaftar dari program penanganan keluarga tidak mampu.</p>
+                                    <p class="text-[10px] text-slate-400 mt-1 leading-relaxed">Keluarga ekonomi tidak mampu.</p>
                                 </div>
                                 <div class="mt-5 pt-4 border-t border-slate-100 dark:border-slate-700">
                                     <span class="text-2xl font-black text-slate-800 dark:text-slate-100" id="count-Afirmasi">0</span>
-                                    <span class="text-[9px] font-bold text-slate-400 uppercase tracking-widest block mt-0.5">Siswa Terdaftar</span>
+                                    <span class="text-[9px] font-bold text-slate-400 uppercase tracking-widest block mt-1">Siswa Terdaftar</span>
                                 </div>
                             </div>
                             <!-- Jalur Mutasi -->
@@ -636,7 +642,7 @@
 
                 <!-- SEKSI 2 & 3 Detail -->
                 <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
-                    <div class="bg-slate-50 dark:bg-slate-700/20 p-6 rounded-2xl border border-slate-200 dark:border-slate-700">
+                    <div class="bg-slate-50 dark:bg-slate-700/20 p-6 rounded-2xl border border-slate-200/20 dark:border-slate-700">
                         <h4 class="text-xs font-black text-teal-700 dark:text-teal-400 uppercase border-b border-slate-200 dark:border-slate-700 pb-2 mb-4 flex items-center gap-1.5">
                             <i class="fas fa-award text-sm"></i> Data Prestasi
                         </h4>
@@ -825,6 +831,10 @@
                 
                 loadUserProfileUI();
                 
+                // Tampilkan sidebar dan toggle tombol sidebar ketika otentikasi berhasil
+                document.getElementById('sidebar').classList.remove('hidden-screen');
+                document.getElementById('sidebar-toggle').classList.remove('hidden-screen');
+
                 const savedScreen = localStorage.getItem('current_screen') || 'dashboard-screen';
                 if (savedScreen === 'crud-screen') {
                     const savedPath = localStorage.getItem('current_path');
@@ -893,12 +903,15 @@
             }
         }
 
-        // --- DOMContentLoaded ---
+        // --- INISIALISASI ---
         document.addEventListener('DOMContentLoaded', () => {
             initTheme();
             updateClock();
             setInterval(updateClock, 1000);
-            document.getElementById('current-year').textContent = new Date().getFullYear();
+            const currentYearEl = document.getElementById('current-year');
+            if (currentYearEl) {
+                currentYearEl.textContent = new Date().getFullYear();
+            }
             updateDashboardCounts();
             
             document.getElementById('main-app').classList.remove('hidden-screen');
@@ -935,8 +948,12 @@
 
             if(screenId === 'login-screen') {
                 document.getElementById('btn-logout').classList.add('hidden-screen');
+                document.getElementById('sidebar').classList.add('hidden-screen');
+                document.getElementById('sidebar-toggle').classList.add('hidden-screen');
             } else {
                 document.getElementById('btn-logout').classList.remove('hidden-screen');
+                document.getElementById('sidebar').classList.remove('hidden-screen');
+                document.getElementById('sidebar-toggle').classList.remove('hidden-screen');
             }
 
             if(saveState && screenId !== 'login-screen') {
