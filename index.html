@@ -33,20 +33,14 @@
         body {
             transition: background-color 0.3s ease, color 0.3s ease;
         }
-
-        /* Rounded elements & Cards */
         .lovelace-card {
             border-radius: 24px;
             transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
         }
-
-        /* Soft inputs */
         .lovelace-input {
             border-radius: 14px;
             transition: all 0.2s ease;
         }
-
-        /* Custom Scrollbar */
         .custom-scroll::-webkit-scrollbar {
             width: 6px;
             height: 6px;
@@ -61,8 +55,6 @@
         .dark .custom-scroll::-webkit-scrollbar-thumb {
             background: #475569;
         }
-
-        /* Animations */
         @keyframes blink {
             0%, 100% { opacity: 1; }
             50% { opacity: 0.3; }
@@ -70,15 +62,12 @@
         .blink-badge {
             animation: blink 2.5s infinite ease-in-out;
         }
-
         .hidden-screen {
             display: none !important;
         }
-
         .fade-in {
             animation: fadeIn 0.3s ease-out forwards;
         }
-
         @keyframes fadeIn {
             from { opacity: 0; transform: translateY(8px); }
             to { opacity: 1; transform: translateY(0); }
@@ -93,7 +82,6 @@
         <header class="bg-white dark:bg-slate-800 border-b border-slate-200 dark:border-slate-700 sticky top-0 z-40 shadow-sm transition-all duration-300">
             <div class="max-w-7xl mx-auto px-4 md:px-6 py-3 flex justify-between items-center gap-4">
                 
-                <!-- Sisi Kiri: Toggle Sidebar & Logo -->
                 <div class="flex items-center gap-3">
                     <button id="sidebar-toggle" onclick="toggleSidebar()" class="p-2.5 text-slate-500 hover:text-blue-600 hover:bg-slate-100 dark:hover:bg-slate-700 rounded-xl transition-all hidden-screen">
                         <i class="fas fa-bars text-lg"></i>
@@ -113,13 +101,9 @@
                     </div>
                 </div>
                 
-                <!-- Sisi Kanan: Clock, Dark Mode Toggle & Logout -->
                 <div class="flex items-center gap-2 md:gap-4">
-                    <div id="realtime-clock" class="hidden lg:block text-xs font-semibold text-slate-500 dark:text-slate-400 bg-slate-50 dark:bg-slate-700/50 px-3 py-1.5 rounded-xl border border-slate-100 dark:border-slate-700">
-                        <!-- Loaded by JS -->
-                    </div>
+                    <div id="realtime-clock" class="hidden lg:block text-xs font-semibold text-slate-500 dark:text-slate-400 bg-slate-50 dark:bg-slate-700/50 px-3 py-1.5 rounded-xl border border-slate-100 dark:border-slate-700"></div>
                     
-                    <!-- Toggle Theme Button -->
                     <button id="theme-toggle" onclick="toggleTheme()" class="p-2.5 text-slate-500 dark:text-slate-400 hover:text-blue-600 dark:hover:text-blue-400 bg-slate-50 dark:bg-slate-700 hover:bg-slate-100 dark:hover:bg-slate-600 rounded-xl transition-all border border-slate-100 dark:border-slate-700">
                         <i id="theme-icon" class="fas fa-moon text-sm"></i>
                     </button>
@@ -134,7 +118,7 @@
         <!-- APP CONTENT LAYOUT -->
         <div class="flex flex-1 relative overflow-hidden">
             
-            <!-- Sidebar Drawer: Slide-out panel -->
+            <!-- Sidebar Drawer -->
             <aside id="sidebar" class="bg-white dark:bg-slate-800 border-r border-slate-200 dark:border-slate-700 w-64 fixed top-[61px] bottom-0 left-0 z-30 transform -translate-x-full transition-transform duration-300 ease-in-out flex flex-col justify-between shadow-sm hidden-screen">
                 <div class="p-4 space-y-6 overflow-y-auto custom-scroll flex-grow">
                     <!-- User Mini Profile -->
@@ -196,7 +180,6 @@
                     </nav>
                 </div>
                 
-                <!-- Bottom Profile Link -->
                 <div class="p-4 border-t border-slate-100 dark:border-slate-700 flex-shrink-0">
                     <button onclick="openProfileScreen()" class="w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-xs font-bold text-slate-500 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-700/50 transition-all">
                         <i class="fas fa-user-cog text-sm"></i> Pengaturan Akun
@@ -211,7 +194,6 @@
             <div id="content-container" class="flex-grow transition-all duration-300 ease-in-out w-full flex flex-col justify-between">
                 <main class="flex-grow p-4 md:p-6 overflow-x-hidden min-h-[calc(100vh-61px)] flex flex-col justify-between">
                     
-                    <!-- Membantu perataan penuh vertikal dengan flex-grow -->
                     <div class="flex-grow flex flex-col">
                         <!-- 1. LOGIN SCREEN -->
                         <div id="login-screen" class="hidden-screen flex-grow flex items-center justify-center w-full fade-in py-12">
@@ -239,7 +221,10 @@
                                             <div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none text-slate-400">
                                                 <i class="fas fa-lock"></i>
                                             </div>
-                                            <input type="password" id="password" required class="lovelace-input w-full pl-10 pr-4 py-3 text-sm text-slate-800 dark:text-slate-100 bg-slate-50 dark:bg-slate-700 border border-transparent dark:border-slate-600 focus:bg-white dark:focus:bg-slate-800 focus:border-blue-500 outline-none transition-all" placeholder="••••••••">
+                                            <input type="password" id="password" required class="lovelace-input w-full pl-10 pr-10 py-3 text-sm text-slate-800 dark:text-slate-100 bg-slate-50 dark:bg-slate-700 border border-transparent dark:border-slate-600 focus:bg-white dark:focus:bg-slate-800 focus:border-blue-500 outline-none transition-all" placeholder="••••••••">
+                                            <button type="button" onclick="togglePasswordVisibility('password', 'login-eye-icon')" class="absolute inset-y-0 right-0 pr-4 flex items-center text-slate-400 hover:text-blue-500 transition-colors focus:outline-none">
+                                                <i class="fas fa-eye" id="login-eye-icon"></i>
+                                            </button>
                                         </div>
                                     </div>
                                     <button type="submit" class="w-full bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white font-bold py-3.5 rounded-xl transition-all shadow-lg shadow-blue-500/30 border border-white/20 mt-2 hover:scale-[1.02]">
@@ -251,7 +236,7 @@
 
                         <!-- 2. DASHBOARD SCREEN -->
                         <div id="dashboard-screen" class="hidden-screen fade-in w-full">
-                            <div class="mb-8 mt-4 text-center md:text-left bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 p-6 rounded-2xl flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 shadow-sm">
+                            <div class="mb-8 mt-4 text-center md:text-left bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 p-6 rounded-2xl flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 shadow-sm animate-fade-in">
                                 <div>
                                     <h2 class="text-xl font-extrabold text-slate-800 dark:text-slate-100 tracking-tight">Dashboard Pendataan</h2>
                                     <p class="text-slate-500 dark:text-slate-400 text-xs mt-1 font-medium">Pilih salah satu jalur pendaftaran di bawah ini atau melalui menu sidebar.</p>
@@ -263,7 +248,6 @@
                             </div>
 
                             <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-                                <!-- Cards dinamis Jalur -->
                                 <div onclick="openPath('Prestasi')" class="lovelace-card bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 p-6 hover:shadow-lg dark:hover:shadow-slate-950/20 hover:-translate-y-1 cursor-pointer text-center group flex flex-col justify-between h-full shadow-sm">
                                     <div>
                                         <div class="w-14 h-14 bg-amber-50 dark:bg-amber-950/40 text-amber-600 dark:text-amber-400 border border-amber-100 dark:border-amber-900 mx-auto rounded-2xl flex items-center justify-center mb-4">
@@ -374,15 +358,15 @@
                                             Daftar Siswa <span class="text-slate-300 dark:text-slate-600 font-light">|</span> Jalur <span id="current-path-title" class="text-blue-600 dark:text-blue-400 uppercase tracking-tight font-black"></span>
                                         </h2>
                                         <div class="flex items-center gap-2">
-                                            <div class="flex items-center gap-2 px-3 py-1 bg-blue-50 dark:bg-blue-950/40 text-blue-600 dark:text-blue-400 rounded-2xl border border-blue-100 dark:border-blue-900/40 shadow-sm">
-                                                <i class="fas fa-mars text-xs"></i>
-                                                <span class="text-[10px] font-black uppercase tracking-wider">Laki-Laki</span>
-                                                <span id="path-count-L" class="text-xs font-black bg-blue-500 text-white px-2 py-0.5 rounded-lg">0</span>
+                                            <div class="flex items-center gap-2 px-3.5 py-1.5 bg-blue-50 dark:bg-blue-950/40 text-blue-600 dark:text-blue-400 rounded-2xl border border-blue-100 dark:border-blue-900/40 shadow-sm">
+                                                <i class="fas fa-mars text-sm"></i>
+                                                <span class="text-[10px] md:text-xs font-black uppercase tracking-wider">Laki-Laki</span>
+                                                <span id="path-count-L" class="text-xs md:text-sm font-black bg-blue-500 text-white px-2.5 py-0.5 rounded-lg ml-0.5 shadow-sm">0</span>
                                             </div>
-                                            <div class="flex items-center gap-2 px-3 py-1 bg-pink-50 dark:bg-pink-950/40 text-pink-600 dark:text-pink-400 rounded-2xl border border-pink-100 dark:border-pink-900/40 shadow-sm">
-                                                <i class="fas fa-venus text-xs"></i>
-                                                <span class="text-[10px] font-black uppercase tracking-wider">Perempuan</span>
-                                                <span id="path-count-P" class="text-xs font-black bg-pink-500 text-white px-2 py-0.5 rounded-lg">0</span>
+                                            <div class="flex items-center gap-2 px-3.5 py-1.5 bg-pink-50 dark:bg-pink-950/40 text-pink-600 dark:text-pink-400 rounded-2xl border border-pink-100 dark:border-pink-900/40 shadow-sm">
+                                                <i class="fas fa-venus text-sm"></i>
+                                                <span class="text-[10px] md:text-xs font-black uppercase tracking-wider">Perempuan</span>
+                                                <span id="path-count-P" class="text-xs md:text-sm font-black bg-pink-500 text-white px-2.5 py-0.5 rounded-lg ml-0.5 shadow-sm">0</span>
                                             </div>
                                         </div>
                                     </div>
@@ -564,7 +548,7 @@
                                 <div class="lg:col-span-8 flex flex-col">
                                     <div class="lovelace-card bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 overflow-hidden flex-grow flex flex-col shadow-sm">
                                         <div class="p-4 bg-slate-50 dark:bg-slate-700/30 border-b border-slate-100 dark:border-slate-700 flex justify-between items-center flex-wrap gap-2">
-                                            <span class="text-xs font-bold text-slate-500 uppercase tracking-wide">Gunakan centang untuk pemindahan kelas massal</span>
+                                            <span class="text-xs font-bold text-slate-500 uppercase tracking-wide">Centang untuk pemindahan kelas massal</span>
                                             <div class="flex items-center gap-2">
                                                 <select id="bulk-move-class-target" class="lovelace-input px-3 py-1.5 text-[11px] bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-600 text-slate-700 dark:text-slate-300 outline-none appearance-none cursor-pointer shadow-sm">
                                                     <option value="">Pindahkan ke Kelas...</option>
@@ -585,7 +569,8 @@
                                                         <th class="p-3 font-bold uppercase">No</th>
                                                         <th class="p-3 font-bold uppercase">NIS / NISN</th>
                                                         <th class="p-3 font-bold uppercase">Nama Siswa</th>
-                                                        <th class="p-3 font-bold uppercase">Gender</th>
+                                                        <th class="p-3 font-bold uppercase text-center">L/P</th>
+                                                        <th class="p-3 font-bold uppercase">Jalur</th>
                                                         <th class="p-3 font-bold uppercase">Kelas Aktif</th>
                                                         <th class="p-3 font-bold uppercase text-center">Aksi Pindah</th>
                                                     </tr>
@@ -660,7 +645,6 @@
                     <input type="hidden" id="student-id">
                     <input type="hidden" id="student-path">
 
-                    <!-- SEKSI 1: DATA PRIBADI -->
                     <div class="mb-6 p-5 bg-slate-50 dark:bg-slate-700/20 border border-slate-200 dark:border-slate-700 rounded-2xl">
                         <h4 class="text-xs font-black text-blue-600 dark:text-blue-400 uppercase tracking-widest border-b border-slate-200 dark:border-slate-700 pb-2 mb-4 flex items-center gap-1.5">
                             <i class="fas fa-user text-sm"></i> 1. Data Pribadi Siswa
@@ -697,7 +681,6 @@
                         </div>
                     </div>
 
-                    <!-- SEKSI KESISWAAN -->
                     <div class="mb-6 p-5 bg-slate-50 dark:bg-slate-700/20 border border-slate-200 dark:border-slate-700 rounded-2xl">
                         <h4 class="text-xs font-black text-indigo-600 dark:text-indigo-400 uppercase tracking-widest border-b border-slate-200 dark:border-slate-700 pb-2 mb-4 flex items-center gap-1.5">
                             <i class="fas fa-university text-sm"></i> Akademik & Kelompok Kelas
@@ -716,7 +699,6 @@
                         </div>
                     </div>
 
-                    <!-- SEKSI 2: PRESTASI -->
                     <div class="mb-6 p-5 bg-slate-50 dark:bg-slate-700/20 border border-slate-200 dark:border-slate-700 rounded-2xl">
                         <h4 class="text-xs font-black text-blue-600 dark:text-blue-400 uppercase tracking-widest border-b border-slate-200 dark:border-slate-700 pb-2 mb-4 flex items-center gap-1.5">
                             <i class="fas fa-award text-sm"></i> 2. Data Prestasi (Opsional)
@@ -732,7 +714,6 @@
                         </div>
                     </div>
 
-                    <!-- SEKSI 3: ORANG TUA / WALI -->
                     <div class="mb-4 p-5 bg-slate-50 dark:bg-slate-700/20 border border-slate-200 dark:border-slate-700 rounded-2xl">
                         <h4 class="text-xs font-black text-blue-600 dark:text-blue-400 uppercase tracking-widest border-b border-slate-200 dark:border-slate-700 pb-2 mb-4 flex items-center gap-1.5">
                             <i class="fas fa-users text-sm"></i> 3. Data Orang Tua & Wali
@@ -783,7 +764,6 @@
     <div id="detail-modal" class="hidden-screen fixed inset-0 z-50 flex items-center justify-center p-4">
         <div class="absolute inset-0 bg-slate-900/40 dark:bg-slate-950/60" onclick="closeDetailModal()"></div>
         <div class="bg-white dark:bg-slate-800 rounded-[24px] border border-slate-200 dark:border-slate-700 w-full max-w-5xl max-h-[90vh] flex flex-col fade-in relative z-10 overflow-hidden shadow-xl transition-colors duration-300">
-            <!-- Modal Header -->
             <div class="bg-slate-50 dark:bg-slate-700/50 border-b border-slate-200 dark:border-slate-700 p-5 flex justify-between items-center shrink-0">
                 <h3 class="text-sm font-extrabold text-slate-800 dark:text-teal-400 flex items-center gap-2"><i class="fas fa-id-card text-teal-600"></i> Detail Data Siswa</h3>
                 <button onclick="closeDetailModal()" class="text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 bg-slate-100 dark:bg-slate-700 rounded-full w-8 h-8 flex items-center justify-center transition-all border border-slate-200 dark:border-slate-600">
@@ -791,9 +771,7 @@
                 </button>
             </div>
             
-            <!-- Modal Body -->
             <div class="p-6 overflow-y-auto custom-scroll flex-grow">
-                <!-- SEKSI STATUS AKADEMIK -->
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
                     <div class="bg-slate-100 dark:bg-slate-700/40 p-4 rounded-2xl border border-slate-200/40 dark:border-slate-700 flex items-center justify-between">
                         <div>
@@ -811,8 +789,7 @@
                     </div>
                 </div>
 
-                <!-- SEKSI 1: DATA PRIBADI -->
-                <div class="bg-slate-50 dark:bg-slate-700/20 p-6 rounded-2xl border border-slate-200 dark:border-slate-700 mb-6">
+                <div class="bg-slate-50 dark:bg-slate-700/20 p-6 rounded-2xl border border-slate-200/40 dark:border-slate-700 mb-6">
                     <h4 class="text-xs font-black text-teal-700 dark:text-teal-400 uppercase border-b border-slate-200 dark:border-slate-700 pb-2 mb-4 flex items-center gap-1.5">
                         <i class="fas fa-user text-sm"></i> Data Pribadi
                     </h4>
@@ -838,13 +815,12 @@
                         
                         <div class="col-span-2 md:col-span-4"><span class="block text-[9px] uppercase font-bold text-slate-400">Alamat Lengkap</span><span id="d_alamat" class="text-xs font-bold text-slate-700 dark:text-slate-300 break-words">-</span></div>
                         
-                        <div><span class="block text-[9px] uppercase font-bold text-slate-400">Jarak</span><span id="d_jarak_rumah" class="text-xs font-bold text-slate-700 dark:text-slate-300">-</span></div>
+                        <div><span class="block text-[9px] uppercase font-bold text-slate-400">Jarak Rumah</span><span id="d_jarak_rumah" class="text-xs font-bold text-slate-700 dark:text-slate-300">-</span></div>
                         <div class="col-span-2"><span class="block text-[9px] uppercase font-bold text-slate-400">Sekolah Asal</span><span id="d_sekolah_lama" class="text-xs font-bold text-slate-700 dark:text-slate-300">-</span></div>
                         <div><span class="block text-[9px] uppercase font-bold text-slate-400">NPSN Asal</span><span id="d_npsn_sekolah_asal" class="text-xs font-bold text-slate-700 dark:text-slate-300">-</span></div>
                     </div>
                 </div>
 
-                <!-- SEKSI 2 & 3 Detail -->
                 <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
                     <div class="bg-slate-50 dark:bg-slate-700/20 p-6 rounded-2xl border border-slate-200/20 dark:border-slate-700">
                         <h4 class="text-xs font-black text-teal-700 dark:text-teal-400 uppercase border-b border-slate-200 dark:border-slate-700 pb-2 mb-4 flex items-center gap-1.5">
@@ -909,7 +885,12 @@
                     </div>
                     <div>
                         <label class="block text-xs font-bold text-slate-500 dark:text-slate-400 mb-1">Password *</label>
-                        <input type="password" id="uf_password" required class="lovelace-input w-full px-4 py-2.5 text-xs bg-slate-50 dark:bg-slate-700 border border-transparent dark:border-slate-600 text-slate-800 dark:text-slate-100 outline-none focus:bg-white dark:focus:bg-slate-800 focus:border-blue-500">
+                        <div class="relative">
+                            <input type="password" id="uf_password" required class="lovelace-input w-full px-4 pr-10 py-2.5 text-xs bg-slate-50 dark:bg-slate-700 border border-transparent dark:border-slate-600 text-slate-800 dark:text-slate-100 outline-none focus:bg-white dark:focus:bg-slate-800 focus:border-blue-500">
+                            <button type="button" onclick="togglePasswordVisibility('uf_password', 'uf-eye-icon')" class="absolute inset-y-0 right-0 pr-3 flex items-center text-slate-400 hover:text-blue-500 transition-colors focus:outline-none">
+                                <i class="fas fa-eye" id="uf-eye-icon"></i>
+                            </button>
+                        </div>
                     </div>
                     <div>
                         <label class="block text-xs font-bold text-slate-500 dark:text-slate-400 mb-1">Level Akses (Role) *</label>
@@ -945,11 +926,12 @@
         ];
 
         let currentPath = '';
-        let students = JSON.parse(localStorage.getItem('siswa_sman1_bna_v2')) || [];
+        let students = [];
         let systemUsers = []; 
         let sidebarOpen = false;
+        let classes = []; 
 
-        let classes = JSON.parse(localStorage.getItem('kelas_sman1_bna_v2')) || [
+        const defaultClasses = [
             { id: 1, name: 'X-1', capacity: 36 },
             { id: 2, name: 'X-2', capacity: 36 },
             { id: 3, name: 'X-3', capacity: 36 }
@@ -1084,7 +1066,11 @@
             if (isLoggedIn && lastActive && (now - parseInt(lastActive)) < IDLE_TIMEOUT) {
                 localStorage.setItem('last_active', now.toString());
                 loadUserProfileUI();
-                populateClassDropdowns();
+                
+                loadClassesFromSpreadsheet().then(() => {
+                    populateClassDropdowns();
+                });
+
                 const sidebar = document.getElementById('sidebar');
                 const sidebarToggle = document.getElementById('sidebar-toggle');
                 if (sidebar) sidebar.classList.remove('hidden-screen');
@@ -1450,6 +1436,134 @@
             }
         }
 
+        function deleteStudent(id) {
+            if (currentUser.role !== 'Super Admin') {
+                Swal.fire({ icon: 'error', title: 'Akses Ditolak', text: 'Hanya peran Super Admin yang diperbolehkan untuk menghapus data.' });
+                return;
+            }
+
+            Swal.fire({
+                title: 'Hapus Data?',
+                text: "Data siswa akan dihapus secara permanen.",
+                icon: 'warning', 
+                showCancelButton: true,
+                confirmButtonColor: '#ef4444', 
+                cancelButtonColor: '#94a3b8',
+                confirmButtonText: 'Ya, Hapus'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    const studentToDelete = students.find(s => s.id === id);
+                    students = students.filter(s => s.id !== id);
+                    localStorage.setItem('siswa_sman1_bna_v2', JSON.stringify(students));
+                    renderTable(); 
+                    updateDashboardCounts();
+                    
+                    if (SCRIPT_URL && SCRIPT_URL !== 'URL_WEB_APP_ANDA_DISINI') {
+                        fetch(SCRIPT_URL, { 
+                            method: 'POST', 
+                            body: JSON.stringify({ action: 'delete', nisn: studentToDelete ? studentToDelete.nisn : '', id: id }), 
+                            headers: { "Content-Type": "text/plain;charset=utf-8" } 
+                        }).catch(e => console.error(e));
+                    }
+                }
+            })
+        }
+
+        function openFormModal(studentId = null) {
+            if (currentUser.role === 'Guru') {
+                Swal.fire({ icon: 'error', title: 'Akses Ditolak', text: 'Peran Guru tidak diizinkan mengubah database.' });
+                return;
+            }
+
+            populateClassDropdowns();
+
+            const formModal = document.getElementById('form-modal');
+            const studentPath = document.getElementById('student-path');
+            const modalTitle = document.getElementById('modal-title');
+            const studentIdInput = document.getElementById('student-id');
+
+            if (formModal) formModal.classList.remove('hidden-screen');
+            if (studentPath) studentPath.value = currentPath;
+
+            if (studentId) {
+                if (modalTitle) modalTitle.textContent = `Edit Siswa - Jalur ${currentPath}`;
+                const student = students.find(s => s.id === studentId);
+                if (studentIdInput) studentIdInput.value = student.id;
+                fields.forEach(field => {
+                    const inputEl = document.getElementById(`f_${field}`);
+                    if(inputEl) {
+                        if (field === 'tanggal_lahir') {
+                            inputEl.value = formatDateForInput(student[field]);
+                        } else {
+                            inputEl.value = student[field] || '';
+                        }
+                    }
+                });
+            } else {
+                if (modalTitle) modalTitle.textContent = `Tambah Siswa - Jalur ${currentPath}`;
+                const form = document.getElementById('student-form');
+                if (form) form.reset();
+                if (studentIdInput) studentIdInput.value = '';
+            }
+        }
+
+        function closeFormModal() { 
+            const formModal = document.getElementById('form-modal');
+            if (formModal) formModal.classList.add('hidden-screen'); 
+        }
+
+        async function saveStudent(e) {
+            e.preventDefault();
+            if (currentUser.role === 'Guru') {
+                Swal.fire({ icon: 'error', title: 'Akses Ditolak', text: 'Guru tidak dapat menyimpan data.' });
+                return;
+            }
+
+            const id = document.getElementById('student-id').value;
+            const path = document.getElementById('student-path').value;
+
+            const studentData = { path: path };
+            fields.forEach(field => {
+                const inputEl = document.getElementById(`f_${field}`);
+                studentData[field] = inputEl ? inputEl.value : '';
+            });
+
+            if (id) studentData.id = Number(id);
+            else studentData.id = students.length > 0 ? Math.max(...students.map(s => s.id)) + 1 : 1;
+
+            if (SCRIPT_URL === 'URL_WEB_APP_ANDA_DISINI') {
+                if (id) students[students.findIndex(s => s.id == id)] = studentData;
+                else students.push(studentData);
+                
+                localStorage.setItem('siswa_sman1_bna_v2', JSON.stringify(students));
+                Swal.fire({ icon: 'success', title: 'Tersimpan (Lokal)', timer: 1500 });
+                closeFormModal(); updateDashboardCounts(); renderTable(); return;
+            }
+
+            Swal.fire({ title: 'Menyimpan...', allowOutsideClick: false, didOpen: () => { Swal.showLoading(); } });
+            try {
+                const response = await fetch(SCRIPT_URL, { 
+                    method: 'POST', 
+                    body: JSON.stringify(studentData), 
+                    headers: { "Content-Type": "text/plain;charset=utf-8" } 
+                });
+                const data = await response.json();
+                if(data.status === 'success') {
+                    if (id) students[students.findIndex(s => s.id == id)] = studentData;
+                    else students.push(studentData);
+                    localStorage.setItem('siswa_sman1_bna_v2', JSON.stringify(students));
+                    Swal.fire({ icon: 'success', title: 'Berhasil', text: 'Data siswa disimpan ke Spreadsheet!', timer: 1500, showConfirmButton: false });
+                    closeFormModal(); updateDashboardCounts(); renderTable();
+                } else throw new Error("Server error");
+            } catch (error) {
+                Swal.fire({ icon: 'error', title: 'Gagal Menyimpan', text: 'Periksa koneksi internet.' });
+            }
+        }
+
+        function editStudent(id) { 
+            openFormModal(id); 
+        }
+
         function generatePDF(student) {
             Swal.fire({
                 title: 'Menyiapkan Dokumen...',
@@ -1587,6 +1701,29 @@
                         </tr>
                     </tbody>
                 </table>
+
+                ${student.nama_kejuaraan ? `
+                <div style="background-color: #f1f5f9; border: 1px solid #cbd5e1; padding: 4px 8px; font-size: 9.5px; font-weight: bold; margin-bottom: 6px; text-transform: uppercase; font-family: 'Times New Roman', Times, serif;">
+                    C. PRESTASI PENDUKUNG (KHUSUS JALUR PRESTASI)
+                </div>
+                <table style="width: 100%; border-collapse: collapse; margin-bottom: 12px; font-family: 'Times New Roman', Times, serif; font-size: 9px;">
+                    <tr style="border-bottom: 1px solid #e2e8f0;">
+                        <td style="width: 28%; padding: 5px 0; font-weight: bold;">1. Nama Kejuaraan / Bidang</td>
+                        <td style="width: 2%; padding: 5px 0;">:</td>
+                        <td style="width: 70%; padding: 5px 0;">${student.nama_kejuaraan} &nbsp;(${student.bidang_prestasi || '-'})</td>
+                    </tr>
+                    <tr style="border-bottom: 1px solid #e2e8f0;">
+                        <td style="padding: 5px 0; font-weight: bold;">2. Tingkat / Juara Ke / Tahun</td>
+                        <td>:</td>
+                        <td>${student.tingkat_prestasi || '-'} &nbsp;|&nbsp; Juara Ke-${student.juara_ke || '-'} (Tahun ${student.tahun_prestasi || '-'})</td>
+                    </tr>
+                    <tr style="border-bottom: 1px solid #e2e8f0;">
+                        <td style="padding: 5px 0; font-weight: bold;">3. Penyelenggara Kegiatan</td>
+                        <td>:</td>
+                        <td>${student.penyelenggara || '-'}</td>
+                    </tr>
+                </table>
+                ` : ''}
 
                 <p style="font-size: 8px; text-align: justify; margin-top: 10px; margin-bottom: 15px; font-style: italic; line-height: 1.3; color: #1e293b; font-family: Arial, sans-serif;">
                     * Saya menyatakan dengan sesungguhnya bahwa seluruh data yang diisi pada formulir ini adalah benar. Apabila ditemukan manipulasi dokumen pendukung, saya bersedia menerima sanksi pembatalan kelulusan hak mendaftar di SMAN 1 Banda Aceh secara sepihak.
@@ -1863,619 +2000,21 @@
             });
         }
 
-        // --- SISTEM MANAGEMENT KELAS & AKADEMIK ---
-        function goToClassManagement(saveState = true) {
-            if (currentUser.role !== 'Super Admin' && currentUser.role !== 'Anggota Kesiswaan') {
-                Swal.fire({ icon: 'error', title: 'Akses Ditolak', text: 'Hanya peran Super Admin & Kesiswaan yang diizinkan.' });
-                return;
-            }
-            closeSidebarOnMobile();
-            populateClassDropdowns();
-            showScreen('class-management-screen', saveState);
-            renderClassDashboardStats();
-            renderClassStudents();
-        }
+        // --- FITUR TOGGLE PASSWORD VISIBILITY ---
+        function togglePasswordVisibility(inputId, iconId) {
+            const input = document.getElementById(inputId);
+            const icon = document.getElementById(iconId);
+            if (!input || !icon) return;
 
-        function renderClassDashboardStats() {
-            const container = document.getElementById('classes-stat-grid');
-            if (!container) return;
-            container.innerHTML = '';
-
-            const totalSiswa = students.length;
-            const terbagiKelas = students.filter(s => s.kelas && s.kelas !== '').length;
-            const belumTerbagi = totalSiswa - terbagiKelas;
-            
-            container.innerHTML += `
-                <div class="lovelace-card bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 p-5 shadow-sm flex flex-col justify-between">
-                    <div>
-                        <span class="text-[10px] font-black uppercase tracking-wider text-slate-400">Total Penempatan Kelas</span>
-                        <div class="text-2xl font-black mt-1 text-slate-800 dark:text-slate-100">${terbagiKelas} / ${totalSiswa} Siswa</div>
-                    </div>
-                    <div class="mt-4 pt-3 border-t border-slate-100 dark:border-slate-700 flex justify-between items-center text-[10px] font-bold">
-                        <span class="text-emerald-600 bg-emerald-50 dark:bg-emerald-950/40 px-2 py-0.5 rounded-md">Terbagi: ${terbagiKelas}</span>
-                        <span class="text-amber-600 bg-amber-50 dark:bg-amber-950/40 px-2 py-0.5 rounded-md">Belum Dapat: ${belumTerbagi}</span>
-                    </div>
-                </div>
-            `;
-
-            classes.forEach(c => {
-                const classStudents = students.filter(s => s.kelas === c.name);
-                const count = classStudents.length;
-                const countL = classStudents.filter(s => s.jenis_kelamin === 'Laki-laki').length;
-                const countP = classStudents.filter(s => s.jenis_kelamin === 'Perempuan').length;
-                const rasioBeban = Math.min(100, Math.round((count / c.capacity) * 100));
-                
-                let progressColor = "bg-indigo-500";
-                if (rasioBeban >= 100) progressColor = "bg-rose-500";
-                else if (rasioBeban >= 85) progressColor = "bg-amber-500";
-
-                container.innerHTML += `
-                    <div class="lovelace-card bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 p-5 shadow-sm flex flex-col justify-between relative group">
-                        <button onclick="deleteClass(${c.id})" class="absolute top-4 right-4 opacity-0 group-hover:opacity-100 transition duration-150 text-slate-400 hover:text-rose-500"><i class="fas fa-trash-alt text-xs"></i></button>
-                        <div>
-                            <span class="text-[10px] font-black uppercase tracking-wider text-slate-400">Rombel Akademik</span>
-                            <div class="flex items-baseline justify-between mt-1">
-                                <span onclick="editClass(${c.id})" class="text-lg font-black text-slate-800 dark:text-slate-100 hover:underline cursor-pointer">${c.name}</span>
-                                <span class="text-xs font-bold text-slate-500">${count} / ${c.capacity}</span>
-                            </div>
-                            <div class="w-full bg-slate-100 dark:bg-slate-700 h-1.5 rounded-full mt-2 overflow-hidden">
-                                <div class="h-full ${progressColor}" style="width: ${rasioBeban}%"></div>
-                            </div>
-                        </div>
-                        <div class="mt-4 pt-3 border-t border-slate-100 dark:border-slate-700 flex justify-between items-center text-[9px] font-bold">
-                            <span class="text-blue-500">L: ${countL}</span>
-                            <span class="text-pink-500">P: ${countP}</span>
-                        </div>
-                    </div>
-                `;
-            });
-        }
-
-        function renderClassStudents() {
-            const tbody = document.getElementById('class-students-table-body');
-            if (!tbody) return;
-            tbody.innerHTML = '';
-
-            const activeClassFilter = document.getElementById('class-select-filter').value;
-            const searchKeyword = document.getElementById('class-search-input').value.toLowerCase();
-
-            const filtered = students.filter(s => {
-                const matchClass = (activeClassFilter === 'BELUM_TERBAGI') ? (!s.kelas || s.kelas === '') : (s.kelas === activeClassFilter);
-                const matchSearch = s.nama_lengkap.toLowerCase().includes(searchKeyword) || (s.nisn && s.nisn.includes(searchKeyword)) || (s.nis && s.nis.includes(searchKeyword));
-                return matchClass && matchSearch;
-            });
-
-            const attendancePanel = document.getElementById('class-attendance-action-panel');
-            if (attendancePanel) {
-                attendancePanel.classList.toggle('hidden', activeClassFilter === 'BELUM_TERBAGI');
-            }
-
-            if (filtered.length === 0) {
-                tbody.innerHTML = `<tr><td colspan="7" class="p-8 text-center text-slate-400">Tidak ada data siswa ditemukan.</td></tr>`;
-                return;
-            }
-
-            filtered.forEach((s, index) => {
-                const tr = document.createElement('tr');
-                tr.className = 'hover:bg-slate-50 dark:hover:bg-slate-700/30 transition-colors border-b border-slate-100 dark:border-slate-700 last:border-0';
-                
-                let optionsHtml = `<option value="">Pindah ke...</option>`;
-                if (s.kelas && s.kelas !== '') {
-                    optionsHtml += `<option value="BELUM_TERBAGI">Keluarkan Kelas</option>`;
-                }
-                classes.forEach(c => {
-                    if (s.kelas !== c.name) {
-                        optionsHtml += `<option value="${c.name}">${c.name}</option>`;
-                    }
-                });
-
-                tr.innerHTML = `
-                    <td class="p-3 text-center">
-                        <input type="checkbox" class="student-class-checkbox" value="${s.id}">
-                    </td>
-                    <td class="p-3 text-slate-400">${index + 1}</td>
-                    <td class="p-3">
-                        <div class="font-bold text-slate-800 dark:text-slate-100">${s.nis || '<span class="text-slate-300 dark:text-slate-600 italic">Belum Ada NIS</span>'}</div>
-                        <div class="text-[10px] text-slate-400">NISN: ${s.nisn || '-'}</div>
-                    </td>
-                    <td class="p-3 font-semibold">${s.nama_lengkap}</td>
-                    <td class="p-3">
-                        <span class="px-2 py-0.5 rounded-full text-[9px] font-bold ${s.jenis_kelamin === 'Laki-laki' ? 'bg-blue-50 text-blue-600 border border-blue-100 dark:bg-blue-950/40 dark:text-blue-400' : 'bg-pink-50 text-pink-600 border border-pink-100 dark:bg-pink-950/40 dark:text-pink-400'}">${s.jenis_kelamin || '-'}</span>
-                    </td>
-                    <td class="p-3 font-black text-indigo-600 dark:text-indigo-400">${s.kelas || '<span class="text-amber-500 font-normal italic">Belum Terbagi</span>'}</td>
-                    <td class="p-3 text-center">
-                        <select onchange="transferSingleStudent(${s.id}, this.value)" class="lovelace-input px-2 py-1 text-[11px] bg-slate-100 dark:bg-slate-700 border border-transparent text-slate-700 dark:text-slate-300 outline-none appearance-none cursor-pointer">
-                            ${optionsHtml}
-                        </select>
-                    </td>
-                `;
-                tbody.appendChild(tr);
-            });
-        }
-
-        function toggleSelectAllClassStudents(masterCheckbox) {
-            const checkboxes = document.querySelectorAll('.student-class-checkbox');
-            checkboxes.forEach(cb => cb.checked = masterCheckbox.checked);
-        }
-
-        function transferSingleStudent(studentId, targetClass) {
-            if (!targetClass) return;
-            
-            const student = students.find(s => Number(s.id) === Number(studentId));
-            if (!student) return;
-
-            student.kelas = (targetClass === 'BELUM_TERBAGI') ? '' : targetClass;
-            localStorage.setItem('siswa_sman1_bna_v2', JSON.stringify(students));
-            
-            Swal.fire({
-                icon: 'success',
-                title: 'Berhasil Dipindahkan',
-                text: `${student.nama_lengkap} dimasukkan ke Rombel ${student.kelas || 'Belum Terbagi'}.`,
-                timer: 1000,
-                showConfirmButton: false
-            });
-
-            renderClassDashboardStats();
-            renderClassStudents();
-            updateDashboardCounts();
-
-            if (SCRIPT_URL && SCRIPT_URL !== 'URL_WEB_APP_ANDA_DISINI') {
-                fetch(SCRIPT_URL, { 
-                    method: 'POST', 
-                    body: JSON.stringify(student), 
-                    headers: { "Content-Type": "text/plain;charset=utf-8" } 
-                }).catch(e => console.error("Gagal sinkronisasi kelas ke server:", e));
-            }
-        }
-
-        function executeBulkClassTransfer() {
-            const targetClass = document.getElementById('bulk-move-class-target').value;
-            if (!targetClass) {
-                Swal.fire('Pilih Kelas', 'Tentukan kelas tujuan perpindahan terlebih dahulu.', 'warning');
-                return;
-            }
-
-            const checkedBoxes = document.querySelectorAll('.student-class-checkbox:checked');
-            if (checkedBoxes.length === 0) {
-                Swal.fire('Siswa Belum Dipilih', 'Beri centang pada kotak daftar siswa yang ingin dipindahkan.', 'warning');
-                return;
-            }
-
-            Swal.fire({
-                title: 'Proses Perpindahan Rombel?',
-                text: `Memindahkan ${checkedBoxes.length} siswa terpilih ke kelas ${targetClass === 'BELUM_TERBAGI' ? 'Belum Terbagi' : targetClass}.`,
-                icon: 'question',
-                showCancelButton: true,
-                confirmButtonColor: '#4f46e5',
-                cancelButtonColor: '#94a3b8',
-                confirmButtonText: 'Ya, Proses'
-            }).then((result) => {
-                if (result.isConfirmed) {
-                    Swal.fire({ title: 'Memproses perpindahan...', allowOutsideClick: false, didOpen: () => { Swal.showLoading(); } });
-
-                    let processedCount = 0;
-                    checkedBoxes.forEach(cb => {
-                        const studentId = Number(cb.value);
-                        const student = students.find(s => s.id === studentId);
-                        if (student) {
-                            student.kelas = (targetClass === 'BELUM_TERBAGI') ? '' : targetClass;
-                            processedCount++;
-                            
-                            if (SCRIPT_URL && SCRIPT_URL !== 'URL_WEB_APP_ANDA_DISINI') {
-                                fetch(SCRIPT_URL, { 
-                                    method: 'POST', 
-                                    body: JSON.stringify(student), 
-                                    headers: { "Content-Type": "text/plain;charset=utf-8" } 
-                                }).catch(e => console.error(e));
-                            }
-                        }
-                    });
-
-                    localStorage.setItem('siswa_sman1_bna_v2', JSON.stringify(students));
-                    
-                    const masterCheckbox = document.getElementById('select-all-class-students');
-                    if (masterCheckbox) masterCheckbox.checked = false;
-
-                    Swal.fire({
-                        icon: 'success',
-                        title: 'Berhasil Dipindahkan',
-                        text: `Sebanyak ${processedCount} siswa berhasil dipindahkan secara massal.`,
-                        timer: 1500,
-                        showConfirmButton: false
-                    });
-
-                    renderClassDashboardStats();
-                    renderClassStudents();
-                    updateDashboardCounts();
-                }
-            });
-        }
-
-        function openClassModal(classId = null) {
-            const modal = document.getElementById('class-modal');
-            const title = document.getElementById('class-modal-title');
-            const form = document.getElementById('class-form');
-            const idInput = document.getElementById('class-id');
-
-            if (modal) modal.classList.remove('hidden-screen');
-
-            if (classId) {
-                if (title) title.textContent = "Edit Rincian Kelas";
-                const c = classes.find(item => item.id === classId);
-                if (idInput) idInput.value = c.id;
-                document.getElementById('cf_name').value = c.name;
-                document.getElementById('cf_capacity').value = c.capacity;
+            if (input.type === "password") {
+                input.type = "text";
+                icon.classList.remove("fa-eye");
+                icon.classList.add("fa-eye-slash"); // Mengubah ikon jadi mata tertutup
             } else {
-                if (title) title.textContent = "Tambah Rombel / Kelas Baru";
-                if (form) form.reset();
-                if (idInput) idInput.value = '';
+                input.type = "password";
+                icon.classList.remove("fa-eye-slash");
+                icon.classList.add("fa-eye"); // Mengubah ikon kembali normal
             }
-        }
-
-        function closeClassModal() {
-            const modal = document.getElementById('class-modal');
-            if (modal) modal.classList.add('hidden-screen');
-        }
-
-        function saveClass(e) {
-            e.preventDefault();
-            const id = document.getElementById('class-id').value;
-            const name = document.getElementById('cf_name').value.trim().toUpperCase();
-            const capacity = Number(document.getElementById('cf_capacity').value);
-
-            const isDuplicate = classes.some(c => c.name === name && c.id !== Number(id));
-            if (isDuplicate) {
-                Swal.fire('Nama Kelas Duplikat', `Kelas dengan nama ${name} sudah terdaftar di sistem.`, 'error');
-                return;
-            }
-
-            if (id) {
-                const index = classes.findIndex(c => c.id === Number(id));
-                if (index > -1) {
-                    const oldName = classes[index].name;
-                    students.forEach(s => {
-                        if (s.kelas === oldName) s.kelas = name;
-                    });
-                    classes[index] = { id: Number(id), name, capacity };
-                }
-            } else {
-                const newId = classes.length > 0 ? Math.max(...classes.map(c => c.id)) + 1 : 1;
-                classes.push({ id: newId, name, capacity });
-            }
-
-            localStorage.setItem('kelas_sman1_bna_v2', JSON.stringify(classes));
-            localStorage.setItem('siswa_sman1_bna_v2', JSON.stringify(students));
-
-            Swal.fire({ icon: 'success', title: 'Rombel Tersimpan', timer: 1200, showConfirmButton: false });
-            closeClassModal();
-            goToClassManagement();
-        }
-
-        function editClass(id) {
-            openClassModal(id);
-        }
-
-        function deleteClass(id) {
-            const c = classes.find(item => item.id === id);
-            if (!c) return;
-
-            const hasStudents = students.some(s => s.kelas === c.name);
-            if (hasStudents) {
-                Swal.fire({
-                    title: 'Kelas Tidak Kosong',
-                    text: `Kelas ${c.name} masih dihuni oleh beberapa siswa. Silakan kosongkan kelas terlebih dahulu sebelum menghapus.`,
-                    icon: 'warning'
-                });
-                return;
-            }
-
-            Swal.fire({
-                title: 'Hapus Kelas?',
-                text: `Rombel ${c.name} akan dihapus permanen dari sistem.`,
-                icon: 'warning',
-                showCancelButton: true,
-                confirmButtonColor: '#ef4444',
-                cancelButtonColor: '#94a3b8',
-                confirmButtonText: 'Ya, Hapus'
-            }).then((result) => {
-                if (result.isConfirmed) {
-                    classes = classes.filter(item => item.id !== id);
-                    localStorage.setItem('kelas_sman1_bna_v2', JSON.stringify(classes));
-                    Swal.fire({ icon: 'success', title: 'Rombel Dihapus', timer: 1000, showConfirmButton: false });
-                    goToClassManagement();
-                }
-            });
-        }
-
-        function triggerBulkNISGeneration() {
-            const unassigned = students.filter(s => !s.nis || s.nis === '');
-            if (unassigned.length === 0) {
-                Swal.fire('NIS Sudah Lengkap', 'Seluruh siswa baru yang terdaftar sudah memiliki Nomor Induk Siswa (NIS).', 'info');
-                return;
-            }
-
-            const defaultPrefix = new Date().getFullYear().toString().substring(2) + "27";
-
-            Swal.fire({
-                title: 'Auto Generate NIS',
-                html: `
-                    <p class="text-xs text-slate-500 mb-4 text-left">Sistem mendeteksi ada <strong>${unassigned.length} siswa</strong> belum memiliki NIS. Masukkan awalan (prefix) dan nomor mulai penomoran otomatis:</p>
-                    <div class="space-y-3 text-left text-xs">
-                        <div>
-                            <label class="block font-bold text-slate-600 mb-1">Prefix NIS (Contoh: ${defaultPrefix})</label>
-                            <input type="number" id="nis-prefix-input" value="${defaultPrefix}" class="w-full px-3 py-2 border rounded-xl outline-none focus:border-indigo-500">
-                        </div>
-                        <div>
-                            <label class="block font-bold text-slate-600 mb-1">Nomor Urut Mulai (Contoh: 001)</label>
-                            <input type="number" id="nis-start-input" value="1" min="1" class="w-full px-3 py-2 border rounded-xl outline-none focus:border-indigo-500">
-                        </div>
-                    </div>
-                `,
-                icon: 'magic',
-                showCancelButton: true,
-                confirmButtonColor: '#4f46e5',
-                cancelButtonColor: '#94a3b8',
-                confirmButtonText: 'Mulai Generate'
-            }).then((result) => {
-                if (result.isConfirmed) {
-                    const prefix = document.getElementById('nis-prefix-input').value;
-                    const startNum = parseInt(document.getElementById('nis-start-input').value, 10);
-
-                    if (!prefix || isNaN(startNum)) {
-                        Swal.fire('Input Tidak Valid', 'Mohon lengkapi awalan dan nomor urutan secara benar.', 'error');
-                        return;
-                    }
-
-                    Swal.fire({ title: 'Menggenerasi NIS Siswa...', allowOutsideClick: false, didOpen: () => { Swal.showLoading(); } });
-
-                    let successCount = 0;
-                    let currentNum = startNum;
-
-                    const sortedUnassigned = [...unassigned].sort((a,b) => a.nama_lengkap.localeCompare(b.nama_lengkap));
-
-                    sortedUnassigned.forEach(s => {
-                        const sequentialStr = String(currentNum).padStart(3, '0');
-                        s.nis = prefix + sequentialStr;
-                        currentNum++;
-                        successCount++;
-
-                        if (SCRIPT_URL && SCRIPT_URL !== 'URL_WEB_APP_ANDA_DISINI') {
-                            fetch(SCRIPT_URL, { 
-                                method: 'POST', 
-                                body: JSON.stringify(s), 
-                                headers: { "Content-Type": "text/plain;charset=utf-8" } 
-                            }).catch(e => console.error(e));
-                        }
-                    });
-
-                    localStorage.setItem('siswa_sman1_bna_v2', JSON.stringify(students));
-                    
-                    Swal.fire({
-                        icon: 'success',
-                        title: 'Generate NIS Berhasil',
-                        text: `Sebanyak ${successCount} siswa baru berhasil diisikan NIS secara urut alfabetis.`,
-                        timer: 2000,
-                        showConfirmButton: false
-                    });
-
-                    renderClassStudents();
-                }
-            });
-        }
-
-        function exportClassAttendanceToExcel() {
-            const activeClass = document.getElementById('class-select-filter').value;
-            if (activeClass === 'BELUM_TERBAGI') return;
-
-            const classStudents = students.filter(s => s.kelas === activeClass).sort((a,b) => a.nama_lengkap.localeCompare(b.nama_lengkap));
-            if (classStudents.length === 0) {
-                Swal.fire('Kelas Kosong', 'Tidak ada siswa di dalam kelas ini untuk diexport presensinya.', 'warning');
-                return;
-            }
-
-            const headers = ["No", "NIS", "Nama Lengkap", "L/P"];
-            for (let i = 1; i <= 31; i++) {
-                headers.push(String(i));
-            }
-            headers.push("S", "I", "A");
-
-            const rows = [];
-            classStudents.forEach((s, idx) => {
-                const row = [
-                    idx + 1,
-                    s.nis || '-',
-                    s.nama_lengkap,
-                    s.jenis_kelamin === 'Laki-laki' ? 'L' : 'P'
-                ];
-                for (let i = 1; i <= 31; i++) {
-                    row.push("");
-                }
-                row.push("", "", "");
-                rows.push(row);
-            });
-
-            const worksheetData = [
-                ["PEMERINTAH ACEH - DINAS PENDIDIKAN"],
-                ["SMA NEGERI 1 BANDA ACEH"],
-                [`DAFTAR HADIR / PRESENSI KELAS: ${activeClass}`],
-                [`Tahun Ajaran: ${new Date().getFullYear()}/${new Date().getFullYear() + 1}`],
-                [],
-                headers,
-                ...rows
-            ];
-
-            const worksheet = XLSX.utils.aoa_to_sheet(worksheetData);
-            
-            worksheet['!merges'] = [
-                { s: { r: 0, c: 0 }, e: { r: 0, c: 37 } },
-                { s: { r: 1, c: 0 }, e: { r: 1, c: 37 } },
-                { s: { r: 2, c: 0 }, e: { r: 2, c: 37 } },
-                { s: { r: 3, c: 0 }, e: { r: 3, c: 37 } }
-            ];
-
-            const workbook = XLSX.utils.book_new();
-            XLSX.utils.book_append_sheet(workbook, worksheet, `Presensi ${activeClass}`);
-            XLSX.writeFile(workbook, `Presensi_Kelas_${activeClass}_SMAN1BNA.xlsx`);
-            
-            Swal.fire({
-                icon: 'success',
-                title: 'Excel Berhasil Diexport!',
-                text: `Lembar presensi kelas ${activeClass} siap dibuka di Excel.`,
-                timer: 2000,
-                showConfirmButton: false
-            });
-        }
-
-        function printCurrentClassAttendance() {
-            const activeClass = document.getElementById('class-select-filter').value;
-            if (activeClass === 'BELUM_TERBAGI') return;
-
-            const classStudents = students.filter(s => s.kelas === activeClass).sort((a,b) => a.nama_lengkap.localeCompare(b.nama_lengkap));
-            if (classStudents.length === 0) {
-                Swal.fire('Kelas Kosong', 'Tidak ada siswa di dalam kelas ini untuk dicetak presensinya.', 'warning');
-                return;
-            }
-
-            Swal.fire({
-                title: 'Menyiapkan Presensi...',
-                text: 'Sedang memformat lembar presensi kelas A4',
-                allowOutsideClick: false,
-                didOpen: () => { Swal.showLoading(); }
-            });
-
-            const element = document.createElement('div');
-            element.className = 'text-black bg-white leading-tight font-sans';
-            element.style.width = '1040px'; 
-            element.style.padding = '15px 30px';
-            element.style.color = '#000000';
-            element.style.backgroundColor = '#ffffff';
-
-            const currentYear = new Date().getFullYear();
-
-            let datesHeaderHtml = '';
-            for (let i = 1; i <= 31; i++) {
-                datesHeaderHtml += `<td style="width: 1.8%; text-align: center; border: 1px solid #000; font-size: 7px; font-weight: bold; padding: 4px 1px;">${i}</td>`;
-            }
-
-            let rowsHtml = '';
-            classStudents.forEach((s, idx) => {
-                let dateCellsHtml = '';
-                for (let i = 1; i <= 31; i++) {
-                    dateCellsHtml += `<td style="border: 1px solid #000; padding: 0;">&nbsp;</td>`;
-                }
-
-                rowsHtml += `
-                    <tr>
-                        <td style="border: 1px solid #000; text-align: center; font-size: 8px; padding: 4px 2px;">${idx + 1}</td>
-                        <td style="border: 1px solid #000; text-align: center; font-size: 8px; font-family: monospace; padding: 4px 2px;">${s.nis || '-'}</td>
-                        <td style="border: 1px solid #000; font-size: 8px; padding: 4px 6px; font-weight: bold; text-transform: uppercase; overflow: hidden; text-overflow: ellipsis; max-width: 140px;">${s.nama_lengkap}</td>
-                        <td style="border: 1px solid #000; text-align: center; font-size: 8px; padding: 4px 2px;">${s.jenis_kelamin === 'Laki-laki' ? 'L' : 'P'}</td>
-                        ${dateCellsHtml}
-                        <td style="border: 1px solid #000; text-align: center; font-size: 7px; padding: 0;">&nbsp;</td>
-                        <td style="border: 1px solid #000; text-align: center; font-size: 7px; padding: 0;">&nbsp;</td>
-                        <td style="border: 1px solid #000; text-align: center; font-size: 7px; padding: 0;">&nbsp;</td>
-                    </tr>
-                `;
-            });
-
-            element.innerHTML = `
-                <table style="width: 100%; border-bottom: 4px double #000000; padding-bottom: 6px; margin-bottom: 12px; font-family: 'Times New Roman', Times, serif;">
-                    <tr>
-                        <td style="width: 10%; text-align: left; vertical-align: middle;">
-                            <img src="https://sman1bandaaceh.sch.id/wp-content/uploads/2018/04/sman1-logoo.png" style="width: 55px; height: auto;" alt="Logo SMAN 1">
-                        </td>
-                        <td style="width: 80%; text-align: center; vertical-align: middle; line-height: 1.25;">
-                            <div style="font-size: 13px; font-weight: bold; margin: 0; text-transform: uppercase;">PEMERINTAH ACEH &bull; DINAS PENDIDIKAN</div>
-                            <div style="font-size: 16px; font-weight: bold; margin: 2px 0 0 0; text-transform: uppercase; letter-spacing: 0.5px;">SMA NEGERI 1 BANDA ACEH</div>
-                            <div style="font-size: 8.5px; font-style: italic; color: #334155; font-family: Arial, sans-serif;">
-                                Jalan Prof. A. Majid Ibrahim I No. 07, Punge Jurong, Kec. Meuraxa, Kota Banda Aceh, Kode Pos 23239
-                            </div>
-                        </td>
-                        <td style="width: 10%; text-align: right; vertical-align: middle;">
-                            &nbsp;
-                        </td>
-                    </tr>
-                </table>
-
-                <table style="width: 100%; margin-bottom: 10px; font-family: Arial, sans-serif; font-size: 9.5px; font-weight: bold;">
-                    <tr>
-                        <td style="width: 33%;">DAFTAR KEHADIRAN / PRESENSI KELAS</td>
-                        <td style="width: 34%; text-align: center; font-size: 12px; text-transform: uppercase; color: #1e3a8a;">KELAS: ${activeClass}</td>
-                        <td style="width: 33%; text-align: right;">Bulan / Tahun: _________________ ${currentYear}</td>
-                    </tr>
-                </table>
-
-                <table style="width: 100%; border-collapse: collapse; font-family: Arial, sans-serif;" cellpadding="0" cellspacing="0">
-                    <thead>
-                        <tr style="background-color: #f1f5f9; text-align: center;">
-                            <td rowspan="2" style="width: 3%; border: 1px solid #000; font-size: 8px; font-weight: bold; padding: 6px 1px;">NO</td>
-                            <td rowspan="2" style="width: 8%; border: 1px solid #000; font-size: 8px; font-weight: bold; padding: 6px 1px;">NIS</td>
-                            <td rowspan="2" style="width: 18%; border: 1px solid #000; font-size: 8px; font-weight: bold; padding: 6px 4px; text-align: left;">NAMA LENGKAP SISWA BARU</td>
-                            <td rowspan="2" style="width: 3%; border: 1px solid #000; font-size: 8px; font-weight: bold; padding: 6px 1px;">L/P</td>
-                            <td colspan="31" style="border: 1px solid #000; font-size: 8px; font-weight: bold; padding: 2px 1px;">TANGGAL KEHADIRAN BULANAN</td>
-                            <td colspan="3" style="width: 6%; border: 1px solid #000; font-size: 7px; font-weight: bold; padding: 2px 1px;">REKAP</td>
-                        </tr>
-                        <tr style="background-color: #f8fafc;">
-                            ${datesHeaderHtml}
-                            <td style="width: 2%; border: 1px solid #000; font-size: 7px; font-weight: bold; text-align: center; padding: 4px 1px;">S</td>
-                            <td style="width: 2%; border: 1px solid #000; font-size: 7px; font-weight: bold; text-align: center; padding: 4px 1px;">I</td>
-                            <td style="width: 2%; border: 1px solid #000; font-size: 7px; font-weight: bold; text-align: center; padding: 4px 1px;">A</td>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        ${rowsHtml}
-                    </tbody>
-                </table>
-
-                <table style="width: 100%; font-family: 'Times New Roman', Times, serif; font-size: 10px; margin-top: 20px;">
-                    <tr>
-                        <td style="width: 40%; text-align: left; vertical-align: top; padding-left: 20px;">
-                            <span style="font-size: 9px; font-style: italic; font-family: Arial, sans-serif; display: block; margin-bottom: 2px;">Keterangan Rekap Absen:</span>
-                            <span style="font-size: 8.5px; font-family: Arial, sans-serif; display: block; color: #475569;">S: Sakit, I: Izin, A: Alfa / Tanpa Keterangan</span>
-                        </td>
-                        <td style="width: 30%; text-align: center; vertical-align: top;">
-                            <span>Mengetahui,</span><br>
-                            <span>Wali Kelas ${activeClass}</span>
-                            <br><br><br><br>
-                            <span>( ___________________________ )</span><br>
-                            <span>NIP. ___________________________</span>
-                        </td>
-                        <td style="width: 30%; text-align: center; vertical-align: top;">
-                            <span>Banda Aceh, _________________</span><br>
-                            <span>Anggota Kesiswaan / Panitia,</span>
-                            <br><br><br><br>
-                            <span style="font-weight: bold; text-decoration: underline; text-transform: uppercase;">${currentUser.username}</span><br>
-                            <span>Jabatan: ${currentUser.role}</span>
-                        </td>
-                    </tr>
-                </table>
-            `;
-
-            document.body.appendChild(element);
-
-            const opt = {
-                margin:       [8, 10, 8, 10], 
-                filename:     `Lembar_Presensi_Kelas_${activeClass}_SMAN1BNA.pdf`,
-                image:        { type: 'jpeg', quality: 1.0 },
-                html2canvas:  { scale: 2, logging: false, useCORS: true },
-                jsPDF:        { unit: 'mm', format: 'a4', orientation: 'landscape' }
-            };
-
-            setTimeout(() => {
-                html2pdf().from(element).set(opt).save().then(() => {
-                    document.body.removeChild(element);
-                    Swal.fire({
-                        icon: 'success',
-                        title: 'Presensi Terunduh!',
-                        text: `Berkas presensi resmi untuk kelas ${activeClass} telah siap dicetak.`,
-                        timer: 2000,
-                        showConfirmButton: false
-                    });
-                }).catch(err => {
-                    console.error("PDF Attendance Render Error:", err);
-                    Swal.fire('Gagal', 'Terjadi kesalahan sistem saat membuat file PDF presensi.', 'error');
-                });
-            }, 600);
         }
     </script>
 </body>
