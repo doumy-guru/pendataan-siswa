@@ -244,6 +244,31 @@
                                 </div>
                             </div>
 
+                            <!-- Statistik Kelas Dashboard -->
+                            <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-6">
+                                <div class="bg-indigo-50 dark:bg-indigo-900/20 border border-indigo-100 dark:border-indigo-800 rounded-2xl p-5 flex items-center gap-4">
+                                    <div class="w-12 h-12 bg-indigo-500 text-white rounded-xl flex items-center justify-center text-xl shadow-sm"><i class="fas fa-chalkboard-teacher"></i></div>
+                                    <div>
+                                        <p class="text-[10px] font-bold text-indigo-600 dark:text-indigo-400 uppercase tracking-widest">Total Kelas Aktif</p>
+                                        <h3 class="text-2xl font-black text-slate-800 dark:text-slate-100" id="dash-total-classes">0</h3>
+                                    </div>
+                                </div>
+                                <div class="bg-emerald-50 dark:bg-emerald-900/20 border border-emerald-100 dark:border-emerald-800 rounded-2xl p-5 flex items-center gap-4">
+                                    <div class="w-12 h-12 bg-emerald-500 text-white rounded-xl flex items-center justify-center text-xl shadow-sm"><i class="fas fa-users"></i></div>
+                                    <div>
+                                        <p class="text-[10px] font-bold text-emerald-600 dark:text-emerald-400 uppercase tracking-widest">Siswa Terbagi</p>
+                                        <h3 class="text-2xl font-black text-slate-800 dark:text-slate-100" id="dash-assigned-students">0</h3>
+                                    </div>
+                                </div>
+                                <div class="bg-amber-50 dark:bg-amber-900/20 border border-amber-100 dark:border-amber-800 rounded-2xl p-5 flex items-center gap-4">
+                                    <div class="w-12 h-12 bg-amber-500 text-white rounded-xl flex items-center justify-center text-xl shadow-sm"><i class="fas fa-user-clock"></i></div>
+                                    <div>
+                                        <p class="text-[10px] font-bold text-amber-600 dark:text-amber-400 uppercase tracking-widest">Belum Terbagi</p>
+                                        <h3 class="text-2xl font-black text-slate-800 dark:text-slate-100" id="dash-unassigned-students">0</h3>
+                                    </div>
+                                </div>
+                            </div>
+
                             <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
                                 <div onclick="openPath('Prestasi')" class="lovelace-card bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 p-6 hover:shadow-lg dark:hover:shadow-slate-950/20 hover:-translate-y-1 cursor-pointer text-center group flex flex-col justify-between h-full shadow-sm">
                                     <div>
@@ -614,6 +639,298 @@
         </div>
     </div>
 
+    <!-- ================= MODAL FORM TAMBAH SISWA ================= -->
+    <div id="form-modal" class="hidden-screen fixed inset-0 z-50 flex items-center justify-center p-4">
+        <div class="absolute inset-0 bg-slate-900/40 dark:bg-slate-950/60 transition-opacity" onclick="closeFormModal()"></div>
+        <div class="bg-white dark:bg-slate-800 rounded-[24px] border border-slate-200 dark:border-slate-700 w-full max-w-5xl max-h-[90vh] flex flex-col fade-in relative z-10 overflow-hidden shadow-xl transition-colors duration-300">
+            <div class="bg-slate-50 dark:bg-slate-700/50 border-b border-slate-200 dark:border-slate-750 p-5 flex justify-between items-center shrink-0">
+                <h3 id="modal-title" class="text-sm font-extrabold text-slate-800 dark:text-slate-100 tracking-tight">Formulir Data Siswa</h3>
+                <button onclick="closeFormModal()" class="text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 bg-slate-100 dark:bg-slate-700 rounded-full w-8 h-8 flex items-center justify-center transition-all border border-slate-200 dark:border-slate-600">
+                    <i class="fas fa-times text-xs"></i>
+                </button>
+            </div>
+            
+            <div class="p-6 overflow-y-auto custom-scroll flex-grow relative">
+                <form id="student-form" onsubmit="saveStudent(event)">
+                    <input type="hidden" id="student-id">
+                    <input type="hidden" id="student-path">
+
+                    <!-- SEKSI 1: DATA PRIBADI -->
+                    <div class="mb-6 p-5 bg-slate-50 dark:bg-slate-700/20 border border-slate-200 dark:border-slate-700 rounded-2xl">
+                        <h4 class="text-xs font-black text-blue-600 dark:text-blue-400 uppercase tracking-widest border-b border-slate-200 dark:border-slate-700 pb-2 mb-4 flex items-center gap-1.5">
+                            <i class="fas fa-user text-sm"></i> 1. Data Pribadi Siswa
+                        </h4>
+                        <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                            <div><label class="block text-xs font-bold text-slate-500 dark:text-slate-400 mb-1">NIK *</label><input type="number" id="f_nik" class="lovelace-input w-full px-3 py-2 text-xs bg-white dark:bg-slate-700 border border-slate-200 dark:border-slate-600 text-slate-800 dark:text-slate-100 outline-none" required></div>
+                            <div><label class="block text-xs font-bold text-slate-500 dark:text-slate-400 mb-1">No KK</label><input type="number" id="f_no_kk" class="lovelace-input w-full px-3 py-2 text-xs bg-white dark:bg-slate-700 border border-slate-200 dark:border-slate-600 text-slate-800 dark:text-slate-100 outline-none"></div>
+                            <div><label class="block text-xs font-bold text-slate-500 dark:text-slate-400 mb-1">NISN *</label><input type="number" id="f_nisn" class="lovelace-input w-full px-3 py-2 text-xs bg-white dark:bg-slate-700 border border-slate-200 dark:border-slate-600 text-slate-800 dark:text-slate-100 outline-none" required></div>
+                            <div><label class="block text-xs font-bold text-slate-500 dark:text-slate-400 mb-1">Nama Lengkap *</label><input type="text" id="f_nama_lengkap" class="lovelace-input w-full px-3 py-2 text-xs bg-white dark:bg-slate-700 border border-slate-200 dark:border-slate-600 text-slate-800 dark:text-slate-100 outline-none" required></div>
+                            <div><label class="block text-xs font-bold text-slate-500 dark:text-slate-400 mb-1">Tempat Lahir *</label><input type="text" id="f_tempat_lahir" class="lovelace-input w-full px-3 py-2 text-xs bg-white dark:bg-slate-700 border border-slate-200 dark:border-slate-600 text-slate-800 dark:text-slate-100 outline-none" required></div>
+                            <div><label class="block text-xs font-bold text-slate-500 dark:text-slate-400 mb-1">Tanggal Lahir *</label><input type="date" id="f_tanggal_lahir" class="lovelace-input w-full px-3 py-2 text-xs bg-white dark:bg-slate-700 border border-slate-200 dark:border-slate-600 text-slate-700 dark:text-slate-300 outline-none" required></div>
+                            <div><label class="block text-xs font-bold text-slate-500 dark:text-slate-400 mb-1">Agama</label>
+                                <select id="f_agama" class="lovelace-input w-full px-3 py-2 text-xs bg-white dark:bg-slate-700 border border-slate-200 dark:border-slate-600 text-slate-700 dark:text-slate-300 outline-none appearance-none">
+                                    <option value="Islam">Islam</option><option value="Kristen">Kristen</option><option value="Katolik">Katolik</option><option value="Hindu">Hindu</option><option value="Buddha">Buddha</option><option value="Konghucu">Konghucu</option>
+                                </select>
+                            </div>
+                            <div><label class="block text-xs font-bold text-slate-500 dark:text-slate-400 mb-1">Jenis Kelamin *</label>
+                                <select id="f_jenis_kelamin" class="lovelace-input w-full px-3 py-2 text-xs bg-white dark:bg-slate-700 border border-slate-200 dark:border-slate-600 text-slate-700 dark:text-slate-300 outline-none appearance-none" required>
+                                    <option value="" disabled selected hidden>Pilih Jenis Kelamin...</option>
+                                    <option value="Laki-laki">Laki-laki</option><option value="Perempuan">Perempuan</option>
+                                </select>
+                            </div>
+                            <div><label class="block text-xs font-bold text-slate-500 dark:text-slate-400 mb-1">No. HP / Phone</label><input type="text" id="f_phone" class="lovelace-input w-full px-3 py-2 text-xs bg-white dark:bg-slate-700 border border-slate-200 dark:border-slate-600 text-slate-800 dark:text-slate-100 outline-none"></div>
+                            <div><label class="block text-xs font-bold text-slate-500 dark:text-slate-400 mb-1">Email</label><input type="email" id="f_email" class="lovelace-input w-full px-3 py-2 text-xs bg-white dark:bg-slate-700 border border-slate-200 dark:border-slate-600 text-slate-800 dark:text-slate-100 outline-none"></div>
+                            <div><label class="block text-xs font-bold text-slate-500 dark:text-slate-400 mb-1">Berat (kg)</label><input type="number" id="f_berat_badan" class="lovelace-input w-full px-3 py-2 text-xs bg-white dark:bg-slate-700 border border-slate-200 dark:border-slate-600 text-slate-800 dark:text-slate-100 outline-none"></div>
+                            <div><label class="block text-xs font-bold text-slate-500 dark:text-slate-400 mb-1">Tinggi (cm)</label><input type="number" id="f_tinggi_badan" class="lovelace-input w-full px-3 py-2 text-xs bg-white dark:bg-slate-700 border border-slate-200 dark:border-slate-600 text-slate-800 dark:text-slate-100 outline-none"></div>
+                            <div><label class="block text-xs font-bold text-slate-500 dark:text-slate-400 mb-1">Anak Ke</label><input type="number" id="f_anak_ke" class="lovelace-input w-full px-3 py-2 text-xs bg-white dark:bg-slate-700 border border-slate-200 dark:border-slate-600 text-slate-800 dark:text-slate-100 outline-none"></div>
+                            <div><label class="block text-xs font-bold text-slate-500 dark:text-slate-400 mb-1">Jml Saudara</label><input type="number" id="f_saudara_kandung" class="lovelace-input w-full px-3 py-2 text-xs bg-white dark:bg-slate-700 border border-slate-200 dark:border-slate-600 text-slate-800 dark:text-slate-100 outline-none"></div>
+                            <div><label class="block text-xs font-bold text-slate-500 dark:text-slate-400 mb-1">Tinggal Bersama</label><input type="text" id="f_tinggal_bersama" class="lovelace-input w-full px-3 py-2 text-xs bg-white dark:bg-slate-700 border border-slate-200 dark:border-slate-600 text-slate-800 dark:text-slate-100 outline-none"></div>
+                            <div class="md:col-span-3"><label class="block text-xs font-bold text-slate-500 dark:text-slate-400 mb-1">Alamat Lengkap</label><textarea id="f_alamat" rows="2" class="lovelace-input w-full px-3 py-2 text-xs bg-white dark:bg-slate-700 border border-slate-200 dark:border-slate-600 text-slate-800 dark:text-slate-100 outline-none resize-none"></textarea></div>
+                            <div><label class="block text-xs font-bold text-slate-500 dark:text-slate-400 mb-1">Jarak (Km)</label><input type="number" step="0.1" id="f_jarak_rumah" class="lovelace-input w-full px-3 py-2 text-xs bg-white dark:bg-slate-700 border border-slate-200 dark:border-slate-600 text-slate-800 dark:text-slate-100 outline-none"></div>
+                            <div><label class="block text-xs font-bold text-slate-500 dark:text-slate-400 mb-1">Sekolah Asal</label><input type="text" id="f_sekolah_lama" class="lovelace-input w-full px-3 py-2 text-xs bg-white dark:bg-slate-700 border border-slate-200 dark:border-slate-600 text-slate-800 dark:text-slate-100 outline-none"></div>
+                            <div><label class="block text-xs font-bold text-slate-500 dark:text-slate-400 mb-1">NPSN Asal</label><input type="number" id="f_npsn_sekolah_asal" class="lovelace-input w-full px-3 py-2 text-xs bg-white dark:bg-slate-700 border border-slate-200 dark:border-slate-600 text-slate-800 dark:text-slate-100 outline-none"></div>
+                        </div>
+                    </div>
+
+                    <!-- SEKSI KESISWAAN -->
+                    <div class="mb-6 p-5 bg-slate-50 dark:bg-slate-700/20 border border-slate-200 dark:border-slate-700 rounded-2xl">
+                        <h4 class="text-xs font-black text-indigo-600 dark:text-indigo-400 uppercase tracking-widest border-b border-slate-200 dark:border-slate-700 pb-2 mb-4 flex items-center gap-1.5">
+                            <i class="fas fa-university text-sm"></i> Akademik & Kelompok Kelas
+                        </h4>
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <div>
+                                <label class="block text-xs font-bold text-slate-500 dark:text-slate-400 mb-1">Nomor Induk Siswa (NIS)</label>
+                                <input type="number" id="f_nis" placeholder="Ketik NIS manual jika ada" class="lovelace-input w-full px-3 py-2 text-xs bg-white dark:bg-slate-700 border border-slate-200 dark:border-slate-600 text-slate-800 dark:text-slate-100 outline-none">
+                            </div>
+                            <div>
+                                <label class="block text-xs font-bold text-slate-500 dark:text-slate-400 mb-1">Kelompok Rombel / Kelas</label>
+                                <select id="f_kelas" class="lovelace-input w-full px-3 py-2 text-xs bg-white dark:bg-slate-700 border border-slate-200 dark:border-slate-600 text-slate-700 dark:text-slate-300 outline-none appearance-none">
+                                    <option value="">Belum Memiliki Kelas</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- SEKSI 2: PRESTASI -->
+                    <div class="mb-6 p-5 bg-slate-50 dark:bg-slate-700/20 border border-slate-200 dark:border-slate-700 rounded-2xl">
+                        <h4 class="text-xs font-black text-blue-600 dark:text-blue-400 uppercase tracking-widest border-b border-slate-200 dark:border-slate-700 pb-2 mb-4 flex items-center gap-1.5">
+                            <i class="fas fa-award text-sm"></i> 2. Data Prestasi (Opsional)
+                        </h4>
+                        <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                            <div><label class="block text-xs font-bold text-slate-500 dark:text-slate-400 mb-1">Nama Kejuaraan</label><input type="text" id="f_nama_kejuaraan" class="lovelace-input w-full px-3 py-2 text-xs bg-white dark:bg-slate-700 border border-slate-200 dark:border-slate-600 text-slate-800 dark:text-slate-100 outline-none"></div>
+                            <div><label class="block text-xs font-bold text-slate-500 dark:text-slate-400 mb-1">Bidang</label><input type="text" id="f_bidang_prestasi" class="lovelace-input w-full px-3 py-2 text-xs bg-white dark:bg-slate-700 border border-slate-200 dark:border-slate-600 text-slate-800 dark:text-slate-100 outline-none"></div>
+                            <div><label class="block text-xs font-bold text-slate-500 dark:text-slate-400 mb-1">Jenis</label><input type="text" id="f_jenis_prestasi" class="lovelace-input w-full px-3 py-2 text-xs bg-white dark:bg-slate-700 border border-slate-200 dark:border-slate-600 text-slate-800 dark:text-slate-100 outline-none"></div>
+                            <div><label class="block text-xs font-bold text-slate-500 dark:text-slate-400 mb-1">Tingkat</label><input type="text" id="f_tingkat_prestasi" class="lovelace-input w-full px-3 py-2 text-xs bg-white dark:bg-slate-700 border border-slate-200 dark:border-slate-600 text-slate-800 dark:text-slate-100 outline-none"></div>
+                            <div><label class="block text-xs font-bold text-slate-500 dark:text-slate-400 mb-1">Juara Ke</label><input type="number" id="f_juara_ke" class="lovelace-input w-full px-3 py-2 text-xs bg-white dark:bg-slate-700 border border-slate-200 dark:border-slate-600 text-slate-800 dark:text-slate-100 outline-none"></div>
+                            <div><label class="block text-xs font-bold text-slate-500 dark:text-slate-400 mb-1">Tahun</label><input type="number" id="f_tahun_prestasi" class="lovelace-input w-full px-3 py-2 text-xs bg-white dark:bg-slate-700 border border-slate-200 dark:border-slate-600 text-slate-800 dark:text-slate-100 outline-none"></div>
+                            <div class="md:col-span-3"><label class="block text-xs font-bold text-slate-500 dark:text-slate-400 mb-1">Penyelenggara</label><input type="text" id="f_penyelenggara" class="lovelace-input w-full px-3 py-2 text-xs bg-white dark:bg-slate-700 border border-slate-200 dark:border-slate-600 text-slate-800 dark:text-slate-100 outline-none"></div>
+                        </div>
+                    </div>
+
+                    <!-- SEKSI 3: ORANG TUA / WALI -->
+                    <div class="mb-4 p-5 bg-slate-50 dark:bg-slate-700/20 border border-slate-200 dark:border-slate-700 rounded-2xl">
+                        <h4 class="text-xs font-black text-blue-600 dark:text-blue-400 uppercase tracking-widest border-b border-slate-200 dark:border-slate-700 pb-2 mb-4 flex items-center gap-1.5">
+                            <i class="fas fa-users text-sm"></i> 3. Data Orang Tua & Wali
+                        </h4>
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
+                            <div class="bg-white dark:bg-slate-700 p-4 rounded-xl border border-slate-200 dark:border-slate-600 space-y-3">
+                                <h5 class="font-extrabold text-xs text-slate-700 dark:text-slate-300 mb-2">Ayah</h5>
+                                <div><label class="block text-[9px] font-bold text-slate-500 dark:text-slate-400 mb-1">Nama Ayah</label><input type="text" id="f_nama_ayah" class="lovelace-input w-full px-3 py-2 text-xs bg-white dark:bg-slate-700 border border-slate-200 dark:border-slate-600 text-slate-800 dark:text-slate-100"></div>
+                                <div><label class="block text-[9px] font-bold text-slate-500 dark:text-slate-400 mb-1">Pekerjaan</label><input type="text" id="f_pekerjaan_ayah" class="lovelace-input w-full px-3 py-2 text-xs bg-white dark:bg-slate-700 border border-slate-200 dark:border-slate-600 text-slate-800 dark:text-slate-100"></div>
+                                <div><label class="block text-[9px] font-bold text-slate-500 dark:text-slate-400 mb-1">Pendidikan</label><input type="text" id="f_pendidikan_ayah" class="lovelace-input w-full px-3 py-2 text-xs bg-white dark:bg-slate-700 border border-slate-200 dark:border-slate-600 text-slate-800 dark:text-slate-100"></div>
+                                <div><label class="block text-[9px] font-bold text-slate-500 dark:text-slate-400 mb-1">No. HP</label><input type="text" id="f_hp_ayah" class="lovelace-input w-full px-3 py-2 text-xs bg-white dark:bg-slate-700 border border-slate-200 dark:border-slate-600 text-slate-800 dark:text-slate-100"></div>
+                                <div><label class="block text-[9px] font-bold text-slate-500 dark:text-slate-400 mb-1">Alamat</label><textarea id="f_alamat_ayah" rows="2" class="lovelace-input w-full px-3 py-2 text-xs bg-white dark:bg-slate-700 border border-slate-200 dark:border-slate-600 text-slate-800 dark:text-slate-100 resize-none"></textarea></div>
+                            </div>
+                            <div class="bg-white dark:bg-slate-700 p-4 rounded-xl border border-slate-200 dark:border-slate-600 space-y-3">
+                                <h5 class="font-extrabold text-xs text-slate-700 dark:text-slate-300 mb-2">Ibu</h5>
+                                <div><label class="block text-[9px] font-bold text-slate-500 dark:text-slate-400 mb-1">Nama Ibu</label><input type="text" id="f_nama_ibu" class="lovelace-input w-full px-3 py-2 text-xs bg-white dark:bg-slate-700 border border-slate-200 dark:border-slate-600 text-slate-800 dark:text-slate-100"></div>
+                                <div><label class="block text-[9px] font-bold text-slate-500 dark:text-slate-400 mb-1">Pekerjaan</label><input type="text" id="f_pekerjaan_ibu" class="lovelace-input w-full px-3 py-2 text-xs bg-white dark:bg-slate-700 border border-slate-200 dark:border-slate-600 text-slate-800 dark:text-slate-100"></div>
+                                <div><label class="block text-[9px] font-bold text-slate-500 dark:text-slate-400 mb-1">Pendidikan</label><input type="text" id="f_pendidikan_ibu" class="lovelace-input w-full px-3 py-2 text-xs bg-white dark:bg-slate-700 border border-slate-200 dark:border-slate-600 text-slate-800 dark:text-slate-100"></div>
+                                <div><label class="block text-[9px] font-bold text-slate-500 dark:text-slate-400 mb-1">No. HP</label><input type="text" id="f_hp_ibu" class="lovelace-input w-full px-3 py-2 text-xs bg-white dark:bg-slate-700 border border-slate-200 dark:border-slate-600 text-slate-800 dark:text-slate-100"></div>
+                                <div><label class="block text-[9px] font-bold text-slate-500 dark:text-slate-400 mb-1">Alamat</label><textarea id="f_alamat_ibu" rows="2" class="lovelace-input w-full px-3 py-2 text-xs bg-white dark:bg-slate-700 border border-slate-200 dark:border-slate-600 text-slate-800 dark:text-slate-100 resize-none"></textarea></div>
+                            </div>
+                            <div class="bg-white dark:bg-slate-700 p-4 rounded-xl border border-slate-200 dark:border-slate-600 space-y-3 md:col-span-2">
+                                <h5 class="font-extrabold text-xs text-slate-700 dark:text-slate-300 mb-2">Wali (Opsional)</h5>
+                                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                    <div><label class="block text-[9px] font-bold text-slate-500 dark:text-slate-400 mb-1">Nama Wali</label><input type="text" id="f_nama_wali" class="lovelace-input w-full px-3 py-2 text-xs bg-white dark:bg-slate-700 border border-slate-200 dark:border-slate-600 text-slate-800 dark:text-slate-100"></div>
+                                    <div><label class="block text-[9px] font-bold text-slate-500 dark:text-slate-400 mb-1">Pekerjaan Wali</label><input type="text" id="f_pekerjaan_wali" class="lovelace-input w-full px-3 py-2 text-xs bg-white dark:bg-slate-700 border border-slate-200 dark:border-slate-600 text-slate-800 dark:text-slate-100"></div>
+                                    <div><label class="block text-[9px] font-bold text-slate-500 dark:text-slate-400 mb-1">Pendidikan Wali</label><input type="text" id="f_pendidikan_wali" class="lovelace-input w-full px-3 py-2 text-xs bg-white dark:bg-slate-700 border border-slate-200 dark:border-slate-600 text-slate-800 dark:text-slate-100"></div>
+                                    <div><label class="block text-[9px] font-bold text-slate-500 dark:text-slate-400 mb-1">No. HP Wali</label><input type="text" id="f_hp_wali" class="lovelace-input w-full px-3 py-2 text-xs bg-white dark:bg-slate-700 border border-slate-200 dark:border-slate-600 text-slate-800 dark:text-slate-100"></div>
+                                    <div class="md:col-span-2"><label class="block text-[9px] font-bold text-slate-500 dark:text-slate-400 mb-1">Alamat Wali</label><textarea id="f_alamat_wali" rows="1" class="lovelace-input w-full px-3 py-2 text-xs bg-white dark:bg-slate-700 border border-slate-200 dark:border-slate-600 text-slate-800 dark:text-slate-100 resize-none"></textarea></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <button type="submit" id="hidden-submit-btn" class="hidden"></button>
+                </form>
+            </div>
+            
+            <div class="p-5 bg-slate-50 dark:bg-slate-700 border-t border-slate-200 dark:border-slate-700 flex justify-end gap-3 shrink-0">
+                <button type="button" onclick="closeFormModal()" class="px-5 py-2.5 text-slate-600 dark:text-slate-300 bg-white dark:bg-slate-700 hover:bg-slate-50 border border-slate-200 dark:border-slate-600 rounded-2xl font-bold transition-all text-xs">Batal</button>
+                <button type="button" onclick="document.getElementById('hidden-submit-btn').click()" class="px-5 py-2.5 bg-blue-600 hover:bg-blue-700 text-white rounded-2xl font-bold transition-all flex items-center gap-1.5 text-xs">
+                    <i class="fas fa-save"></i> Simpan Data
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- ================= MODAL DETAIL SISWA ================= -->
+    <div id="detail-modal" class="hidden-screen fixed inset-0 z-50 flex items-center justify-center p-4">
+        <div class="absolute inset-0 bg-slate-900/40 dark:bg-slate-950/60" onclick="closeDetailModal()"></div>
+        <div class="bg-white dark:bg-slate-800 rounded-[24px] border border-slate-200 dark:border-slate-700 w-full max-w-5xl max-h-[90vh] flex flex-col fade-in relative z-10 overflow-hidden shadow-xl transition-colors duration-300">
+            <!-- Modal Header -->
+            <div class="bg-slate-50 dark:bg-slate-700/50 border-b border-slate-200 dark:border-slate-700 p-5 flex justify-between items-center shrink-0">
+                <h3 class="text-sm font-extrabold text-slate-800 dark:text-teal-400 flex items-center gap-2"><i class="fas fa-id-card text-teal-600"></i> Detail Data Siswa</h3>
+                <button onclick="closeDetailModal()" class="text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 bg-slate-100 dark:bg-slate-700 rounded-full w-8 h-8 flex items-center justify-center transition-all border border-slate-200 dark:border-slate-600">
+                    <i class="fas fa-times text-xs"></i>
+                </button>
+            </div>
+            
+            <!-- Modal Body -->
+            <div class="p-6 overflow-y-auto custom-scroll flex-grow">
+                <!-- SEKSI STATUS AKADEMIK -->
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
+                    <div class="bg-slate-100 dark:bg-slate-700/40 p-4 rounded-2xl border border-slate-200/40 dark:border-slate-700 flex items-center justify-between">
+                        <div>
+                            <span class="block text-[10px] uppercase font-extrabold text-slate-400">Nomor Induk Siswa (NIS)</span>
+                            <span id="d_nis" class="text-base font-black text-slate-800 dark:text-slate-100">-</span>
+                        </div>
+                        <i class="fas fa-fingerprint text-2xl text-slate-300 dark:text-slate-600"></i>
+                    </div>
+                    <div class="bg-slate-100 dark:bg-slate-700/40 p-4 rounded-2xl border border-slate-200/40 dark:border-slate-700 flex items-center justify-between">
+                        <div>
+                            <span class="block text-[10px] uppercase font-extrabold text-slate-400">Pembagian Kelas (Rombel)</span>
+                            <span id="d_kelas" class="text-base font-black text-slate-800 dark:text-slate-100">Belum Terbagi</span>
+                        </div>
+                        <i class="fas fa-school text-2xl text-slate-300 dark:text-slate-600"></i>
+                    </div>
+                </div>
+
+                <!-- SEKSI 1: DATA PRIBADI -->
+                <div class="bg-slate-50 dark:bg-slate-700/20 p-6 rounded-2xl border border-slate-200/40 dark:border-slate-700 mb-6">
+                    <h4 class="text-xs font-black text-teal-700 dark:text-teal-400 uppercase border-b border-slate-200 dark:border-slate-700 pb-2 mb-4 flex items-center gap-1.5">
+                        <i class="fas fa-user text-sm"></i> Data Pribadi
+                    </h4>
+                    <div class="grid grid-cols-2 md:grid-cols-4 gap-y-4 gap-x-2">
+                        <div><span class="block text-[9px] uppercase font-bold text-slate-400">NIK</span><span id="d_nik" class="text-xs font-bold text-slate-700 dark:text-slate-300">-</span></div>
+                        <div><span class="block text-[9px] uppercase font-bold text-slate-400">No KK</span><span id="d_no_kk" class="text-xs font-bold text-slate-700 dark:text-slate-300">-</span></div>
+                        <div><span class="block text-[9px] uppercase font-bold text-slate-400">NISN</span><span id="d_nisn" class="text-xs font-bold text-slate-700 dark:text-slate-300">-</span></div>
+                        <div><span class="block text-[9px] uppercase font-bold text-slate-400">Nama Lengkap</span><span id="d_nama_lengkap" class="text-xs font-bold text-slate-700 dark:text-slate-300">-</span></div>
+                        
+                        <div><span class="block text-[9px] uppercase font-bold text-slate-400">Tempat Lahir</span><span id="d_tempat_lahir" class="text-xs font-bold text-slate-700 dark:text-slate-300">-</span></div>
+                        <div><span class="block text-[9px] uppercase font-bold text-slate-400">Tanggal Lahir</span><span id="d_tanggal_lahir" class="text-xs font-bold text-slate-700 dark:text-slate-300">-</span></div>
+                        <div><span class="block text-[9px] uppercase font-bold text-slate-400">Agama</span><span id="d_agama" class="text-xs font-bold text-slate-700 dark:text-slate-300">-</span></div>
+                        <div><span class="block text-[9px] uppercase font-bold text-slate-400">Jenis Kelamin</span><span id="d_jenis_kelamin" class="text-xs font-bold text-slate-700 dark:text-slate-300">-</span></div>
+                        
+                        <div><span class="block text-[9px] uppercase font-bold text-slate-400">No. HP</span><span id="d_phone" class="text-xs font-bold text-slate-700 dark:text-slate-300">-</span></div>
+                        <div><span class="block text-[9px] uppercase font-bold text-slate-400">Email</span><span id="d_email" class="text-xs font-bold text-slate-700 dark:text-slate-300">-</span></div>
+                        <div><span class="block text-[9px] uppercase font-bold text-slate-400">Berat Badan</span><span id="d_berat_badan" class="text-xs font-bold text-slate-700 dark:text-slate-300">-</span></div>
+                        <div><span class="block text-[9px] uppercase font-bold text-slate-400">Tinggi Badan</span><span id="d_tinggi_badan" class="text-xs font-bold text-slate-700 dark:text-slate-300">-</span></div>
+                        
+                        <div><span class="block text-[9px] uppercase font-bold text-slate-400">Anak Ke</span><span id="d_anak_ke" class="text-xs font-bold text-slate-700 dark:text-slate-300">-</span></div>
+                        <div><span class="block text-[9px] uppercase font-bold text-slate-400">Saudara</span><span id="d_saudara_kandung" class="text-xs font-bold text-slate-700 dark:text-slate-300">-</span></div>
+                        <div class="col-span-2"><span class="block text-[9px] uppercase font-bold text-slate-400">Tinggal Bersama</span><span id="d_tinggal_bersama" class="text-xs font-bold text-slate-700 dark:text-slate-300">-</span></div>
+                        
+                        <div class="col-span-2 md:col-span-4"><span class="block text-[9px] uppercase font-bold text-slate-400">Alamat Lengkap</span><span id="d_alamat" class="text-xs font-bold text-slate-700 dark:text-slate-300 break-words">-</span></div>
+                        
+                        <div><span class="block text-[9px] uppercase font-bold text-slate-400">Jarak Rumah</span><span id="d_jarak_rumah" class="text-xs font-bold text-slate-700 dark:text-slate-300">-</span></div>
+                        <div class="col-span-2"><span class="block text-[9px] uppercase font-bold text-slate-400">Sekolah Asal</span><span id="d_sekolah_lama" class="text-xs font-bold text-slate-700 dark:text-slate-300">-</span></div>
+                        <div><span class="block text-[9px] uppercase font-bold text-slate-400">NPSN Asal</span><span id="d_npsn_sekolah_asal" class="text-xs font-bold text-slate-700 dark:text-slate-300">-</span></div>
+                    </div>
+                </div>
+
+                <!-- SEKSI 2 & 3 Detail -->
+                <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                    <div class="bg-slate-50 dark:bg-slate-700/20 p-6 rounded-2xl border border-slate-200/20 dark:border-slate-700">
+                        <h4 class="text-xs font-black text-teal-700 dark:text-teal-400 uppercase border-b border-slate-200 dark:border-slate-700 pb-2 mb-4 flex items-center gap-1.5">
+                            <i class="fas fa-award text-sm"></i> Data Prestasi
+                        </h4>
+                        <div class="space-y-3">
+                            <div><span class="block text-[9px] uppercase font-bold text-slate-400">Nama Kejuaraan</span><span id="d_nama_kejuaraan" class="text-xs font-bold text-slate-700 dark:text-slate-300">-</span></div>
+                            <div class="grid grid-cols-2 gap-2">
+                                <div><span class="block text-[9px] uppercase font-bold text-slate-400">Bidang</span><span id="d_bidang_prestasi" class="text-xs font-bold text-slate-700 dark:text-slate-300">-</span></div>
+                                <div><span class="block text-[9px] uppercase font-bold text-slate-400">Jenis</span><span id="d_jenis_prestasi" class="text-xs font-bold text-slate-700 dark:text-slate-300">-</span></div>
+                                <div><span class="block text-[9px] uppercase font-bold text-slate-400">Tingkat</span><span id="d_tingkat_prestasi" class="text-xs font-bold text-slate-700 dark:text-slate-300">-</span></div>
+                                <div><span class="block text-[9px] uppercase font-bold text-slate-400">Juara Ke</span><span id="d_juara_ke" class="text-xs font-bold text-slate-700 dark:text-slate-300">-</span></div>
+                            </div>
+                            <div><span class="block text-[9px] uppercase font-bold text-slate-400">Penyelenggara / Tahun</span><span class="text-xs font-bold text-slate-700 dark:text-slate-300"><span id="d_penyelenggara">-</span> (<span id="d_tahun_prestasi">-</span>)</span></div>
+                        </div>
+                    </div>
+                    
+                    <div class="bg-slate-50 dark:bg-slate-700/20 p-6 rounded-2xl border border-slate-200 dark:border-slate-700">
+                        <h4 class="text-xs font-black text-teal-700 dark:text-teal-400 uppercase border-b border-slate-200 dark:border-slate-700 pb-2 mb-4 flex items-center gap-1.5">
+                            <i class="fas fa-users text-sm"></i> Data Orang Tua & Wali
+                        </h4>
+                        <div class="space-y-4">
+                            <div class="bg-white dark:bg-slate-700 p-3 rounded-xl border border-slate-100 dark:border-slate-600"><span class="block text-[10px] font-black text-slate-400 mb-1 border-b border-slate-100 dark:border-slate-600 pb-1">AYAH: <span id="d_nama_ayah" class="text-slate-700 dark:text-slate-200 ml-1">-</span></span>
+                                <div class="text-[9px] text-slate-500 mt-1 font-semibold">Pekerjaan: <span id="d_pekerjaan_ayah">-</span> | HP: <span id="d_hp_ayah">-</span></div>
+                            </div>
+                            <div class="bg-white dark:bg-slate-700 p-3 rounded-xl border border-slate-100 dark:border-slate-600"><span class="block text-[10px] font-black text-slate-400 mb-1 border-b border-slate-100 dark:border-slate-600 pb-1">IBU: <span id="d_nama_ibu" class="text-slate-700 dark:text-slate-200 ml-1">-</span></span>
+                                <div class="text-[9px] text-slate-500 mt-1 font-semibold">Pekerjaan: <span id="d_pekerjaan_ibu">-</span> | HP: <span id="d_hp_ibu">-</span></div>
+                            </div>
+                            <div class="bg-white dark:bg-slate-700 p-3 rounded-xl border border-slate-100 dark:border-slate-600"><span class="block text-[10px] font-black text-slate-400 mb-1 border-b border-slate-100 dark:border-slate-600 pb-1">WALI: <span id="d_nama_wali" class="text-slate-700 dark:text-slate-200 ml-1">-</span></span>
+                                <div class="text-[9px] text-slate-500 mt-1 font-semibold">Pekerjaan: <span id="d_pekerjaan_wali">-</span> | HP: <span id="d_hp_wali">-</span></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div id="detail-modal-footer" class="p-5 bg-slate-50 dark:bg-slate-700 border-t border-slate-200 dark:border-slate-700 flex justify-end gap-3 shrink-0">
+                <button type="button" onclick="closeDetailModal()" class="px-5 py-2.5 text-slate-600 dark:text-slate-300 bg-white dark:bg-slate-700 border border-slate-200 dark:border-slate-600 rounded-2xl font-bold transition-all text-xs shadow-sm">Tutup</button>
+                <button type="button" id="btn-edit-from-detail" class="px-5 py-2.5 bg-blue-600 hover:bg-blue-700 text-white rounded-2xl font-bold transition-all flex items-center gap-1.5 text-xs">
+                    <i class="fas fa-edit"></i> Edit Data
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- ================= MODAL FORM KELOLA USER ================= -->
+    <div id="user-modal" class="hidden-screen fixed inset-0 z-50 flex items-center justify-center p-4">
+        <div class="absolute inset-0 bg-slate-900/40 dark:bg-slate-950/60 transition-opacity" onclick="closeUserModal()"></div>
+        <div class="bg-white dark:bg-slate-800 rounded-[24px] border border-slate-200 dark:border-slate-700 w-full max-w-md flex flex-col fade-in relative z-10 overflow-hidden shadow-xl transition-colors duration-300">
+            <div class="bg-slate-50 dark:bg-slate-700/50 border-b border-slate-200 dark:border-slate-700 p-5 flex justify-between items-center shrink-0">
+                <h3 id="user-modal-title" class="text-sm font-extrabold text-slate-800 dark:text-slate-100 tracking-tight">Formulir Pengguna</h3>
+                <button onclick="closeUserModal()" class="text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 bg-slate-100 dark:bg-slate-700 rounded-full w-8 h-8 flex items-center justify-center transition-all border border-slate-200 dark:border-slate-600">
+                    <i class="fas fa-times text-xs"></i>
+                </button>
+            </div>
+            <div class="p-6 shrink-0">
+                <form id="user-form" onsubmit="saveUser(event)" class="space-y-4">
+                    <input type="hidden" id="user-is-edit" value="false">
+                    <div>
+                        <label class="block text-xs font-bold text-slate-500 dark:text-slate-400 mb-1">Username *</label>
+                        <input type="text" id="uf_username" required class="lovelace-input w-full px-4 py-2.5 text-xs bg-slate-50 dark:bg-slate-700 border border-transparent dark:border-slate-600 text-slate-800 dark:text-slate-100 outline-none focus:bg-white dark:focus:bg-slate-800 focus:border-blue-500">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-bold text-slate-500 dark:text-slate-400 mb-1">Password *</label>
+                        <div class="relative">
+                            <input type="password" id="uf_password" required class="lovelace-input w-full px-4 pr-10 py-2.5 text-xs bg-slate-50 dark:bg-slate-700 border border-transparent dark:border-slate-600 text-slate-800 dark:text-slate-100 outline-none focus:bg-white dark:focus:bg-slate-800 focus:border-blue-500">
+                            <button type="button" onclick="togglePasswordVisibility('uf_password', 'uf-eye-icon')" class="absolute inset-y-0 right-0 pr-3 flex items-center text-slate-400 hover:text-blue-500 transition-colors focus:outline-none">
+                                <i class="fas fa-eye" id="uf-eye-icon"></i>
+                            </button>
+                        </div>
+                    </div>
+                    <div>
+                        <label class="block text-xs font-bold text-slate-500 dark:text-slate-400 mb-1">Level Akses (Role) *</label>
+                        <select id="uf_role" class="lovelace-input w-full px-4 py-2.5 text-xs bg-slate-50 dark:bg-slate-700 border border-transparent dark:border-slate-600 text-slate-700 dark:text-slate-300 outline-none appearance-none cursor-pointer focus:bg-white dark:focus:bg-slate-800 focus:border-blue-500">
+                            <option value="Super Admin">Super Admin (Akses Penuh)</option>
+                            <option value="Anggota Kesiswaan">Anggota Kesiswaan (Tambah & Edit)</option>
+                            <option value="Guru">Guru (Lihat Saja)</option>
+                        </select>
+                    </div>
+                    <button type="submit" id="hidden-user-submit-btn" class="hidden"></button>
+                </form>
+            </div>
+            <div class="p-5 bg-slate-50 dark:bg-slate-700 border-t border-slate-200 dark:border-slate-700 flex justify-end gap-3 shrink-0">
+                <button type="button" onclick="closeUserModal()" class="px-5 py-2.5 text-slate-600 dark:text-slate-300 bg-white dark:bg-slate-700 hover:bg-slate-50 border border-slate-200 dark:border-slate-600 rounded-2xl font-bold transition-all text-xs">Batal</button>
+                <button type="button" onclick="document.getElementById('hidden-user-submit-btn').click()" class="px-5 py-2.5 bg-blue-600 hover:bg-blue-700 text-white rounded-2xl font-bold transition-all flex items-center gap-1.5 text-xs">
+                    <i class="fas fa-save"></i> Simpan User
+                </button>
+            </div>
+        </div>
+    </div>
+
     <!-- ================= LOGIKA JAVASCRIPT ================= -->
     <script>
         const fields = [
@@ -769,7 +1086,6 @@
                 localStorage.setItem('last_active', now.toString());
                 loadUserProfileUI();
                 
-                // Prioritize loading classes for the multi-device support feature
                 loadClassesFromSpreadsheet().then(() => {
                     populateClassDropdowns();
                 });
@@ -1062,6 +1378,7 @@
         function backToDashboard() { currentPath = ''; localStorage.removeItem('current_path'); goToDashboard(); }
 
         function updateDashboardCounts() {
+            // Count for Paths
             ['Prestasi', 'Domisili', 'Afirmasi', 'Mutasi'].forEach(p => {
                 const pathStudents = students.filter(s => s.path === p);
                 safeSetText(`count-${p}`, pathStudents.length);
@@ -1069,6 +1386,15 @@
                 safeSetText(`count-${p}-L`, pathStudents.filter(s => s.jenis_kelamin === 'Laki-laki').length);
                 safeSetText(`count-${p}-P`, pathStudents.filter(s => s.jenis_kelamin === 'Perempuan').length);
             });
+
+            // Count for Dashboard Classes Summary
+            const totalSiswa = students.length;
+            const terbagiKelas = students.filter(s => s.kelas && s.kelas !== '').length;
+            const belumTerbagi = totalSiswa - terbagiKelas;
+            
+            safeSetText('dash-total-classes', classes.length);
+            safeSetText('dash-assigned-students', terbagiKelas);
+            safeSetText('dash-unassigned-students', belumTerbagi);
         }
 
         async function loadDataFromSpreadsheet() {
@@ -1134,12 +1460,12 @@
                 filteredStudents.forEach((student, index) => {
                     const tr = document.createElement('tr');
                     tr.className = 'hover:bg-slate-50 dark:hover:bg-slate-700/30 transition-colors border-b border-slate-100 dark:border-slate-700 last:border-0';
-                    let actionButtonsHtml = `<button onclick="viewStudent(${student.id})" class="bg-slate-100 hover:bg-slate-200 dark:bg-slate-700 dark:hover:bg-slate-600 text-slate-600 dark:text-slate-300 w-8 h-8 rounded-full text-xs font-bold transition shadow-sm inline-flex items-center justify-center"><i class="fas fa-eye"></i></button>`;
+                    let actionButtonsHtml = `<button onclick="viewStudent('${student.id}')" class="bg-slate-100 hover:bg-slate-200 dark:bg-slate-700 dark:hover:bg-slate-600 text-slate-600 dark:text-slate-300 w-8 h-8 rounded-full text-xs font-bold transition shadow-sm inline-flex items-center justify-center"><i class="fas fa-eye"></i></button>`;
                     if (currentUser.role !== 'Guru') {
-                        actionButtonsHtml += ` <button onclick="editStudent(${student.id})" class="bg-slate-100 hover:bg-blue-50 dark:bg-slate-700 dark:hover:bg-blue-950/40 text-slate-600 dark:text-slate-300 w-8 h-8 rounded-full text-xs font-bold transition shadow-sm inline-flex items-center justify-center"><i class="fas fa-edit"></i></button>`;
+                        actionButtonsHtml += ` <button onclick="editStudent('${student.id}')" class="bg-slate-100 hover:bg-blue-50 dark:bg-slate-700 dark:hover:bg-blue-950/40 text-slate-600 dark:text-slate-300 w-8 h-8 rounded-full text-xs font-bold transition shadow-sm inline-flex items-center justify-center"><i class="fas fa-edit"></i></button>`;
                     }
                     if (currentUser.role === 'Super Admin') {
-                        actionButtonsHtml += ` <button onclick="deleteStudent(${student.id})" class="bg-slate-100 hover:bg-rose-50 dark:bg-slate-700 dark:hover:bg-rose-950/40 text-slate-600 dark:text-slate-300 w-8 h-8 rounded-full text-xs font-bold transition shadow-sm inline-flex items-center justify-center"><i class="fas fa-trash-alt"></i></button>`;
+                        actionButtonsHtml += ` <button onclick="deleteStudent('${student.id}')" class="bg-slate-100 hover:bg-rose-50 dark:bg-slate-700 dark:hover:bg-rose-950/40 text-slate-600 dark:text-slate-300 w-8 h-8 rounded-full text-xs font-bold transition shadow-sm inline-flex items-center justify-center"><i class="fas fa-trash-alt"></i></button>`;
                     }
 
                     tr.innerHTML = `
@@ -1171,8 +1497,8 @@
                 confirmButtonText: 'Ya, Hapus'
             }).then((result) => {
                 if (result.isConfirmed) {
-                    const studentToDelete = students.find(s => s.id === id);
-                    students = students.filter(s => s.id !== id);
+                    const studentToDelete = students.find(s => String(s.id) === String(id));
+                    students = students.filter(s => String(s.id) !== String(id));
                     localStorage.setItem('siswa_sman1_bna_v2', JSON.stringify(students));
                     renderTable(); 
                     updateDashboardCounts();
@@ -1206,7 +1532,7 @@
 
             if (studentId) {
                 if (modalTitle) modalTitle.textContent = `Edit Siswa - Jalur ${currentPath}`;
-                const student = students.find(s => s.id === studentId);
+                const student = students.find(s => String(s.id) === String(studentId));
                 if (studentIdInput) studentIdInput.value = student.id;
                 fields.forEach(field => {
                     const inputEl = document.getElementById(`f_${field}`);
@@ -1251,7 +1577,7 @@
             else studentData.id = students.length > 0 ? Math.max(...students.map(s => s.id)) + 1 : 1;
 
             if (SCRIPT_URL === 'URL_WEB_APP_ANDA_DISINI') {
-                if (id) students[students.findIndex(s => s.id == id)] = studentData;
+                if (id) students[students.findIndex(s => String(s.id) === String(id))] = studentData;
                 else students.push(studentData);
                 
                 localStorage.setItem('siswa_sman1_bna_v2', JSON.stringify(students));
@@ -1268,7 +1594,7 @@
                 });
                 const data = await response.json();
                 if(data.status === 'success') {
-                    if (id) students[students.findIndex(s => s.id == id)] = studentData;
+                    if (id) students[students.findIndex(s => String(s.id) === String(id))] = studentData;
                     else students.push(studentData);
                     localStorage.setItem('siswa_sman1_bna_v2', JSON.stringify(students));
                     Swal.fire({ icon: 'success', title: 'Berhasil', text: 'Data siswa disimpan ke Spreadsheet!', timer: 1500, showConfirmButton: false });
@@ -1502,7 +1828,7 @@
         }
 
         function viewStudent(id) {
-            const student = students.find(s => Number(s.id) === Number(id));
+            const student = students.find(s => String(s.id) === String(id));
             if (!student) return;
             
             fields.forEach(field => {
@@ -1723,6 +2049,7 @@
         async function loadClassesFromSpreadsheet() {
             if (SCRIPT_URL === 'URL_WEB_APP_ANDA_DISINI') {
                 classes = JSON.parse(localStorage.getItem('kelas_sman1_bna_v2')) || defaultClasses;
+                updateDashboardCounts(); // Pastikan update stat dijalankan
                 return;
             }
             try {
@@ -1738,6 +2065,7 @@
                 console.error("Gagal sinkronisasi data kelas.", e);
                 classes = JSON.parse(localStorage.getItem('kelas_sman1_bna_v2')) || defaultClasses;
             }
+            updateDashboardCounts();
         }
 
         async function syncClassToSpreadsheet(classData, isDelete = false) {
@@ -1825,6 +2153,7 @@
                             </div>
                         </div>
                         
+                        <!-- HIGHLY PROMINENT L & P BADGES ON CLASS CARDS -->
                         <div class="mt-4 pt-3 border-t border-slate-100 dark:border-slate-700 flex justify-between items-center gap-2">
                             <span class="flex-1 text-center py-1.5 px-3 bg-blue-100 dark:bg-blue-950/60 text-blue-700 dark:text-blue-300 font-extrabold rounded-xl text-xs flex items-center justify-center gap-1.5 shadow-sm border border-blue-200/50 dark:border-blue-900/50">
                                 Laki-Laki: <span class="text-sm font-black text-blue-800 dark:text-blue-100">${countL}</span>
@@ -1872,6 +2201,7 @@
                     if (s.kelas !== c.name) optionsHtml += `<option value="${c.name}">${c.name}</option>`;
                 });
 
+                // PROMINENT BADGES ON STUDENT DATA TABLE
                 const genderBadge = s.jenis_kelamin === 'Laki-laki' ? 
                     `<span class="px-2 py-0.5 bg-blue-50 dark:bg-blue-900/30 text-blue-600 dark:text-blue-400 font-bold rounded text-[10px]">L</span>` : 
                     `<span class="px-2 py-0.5 bg-pink-50 dark:bg-pink-900/30 text-pink-600 dark:text-pink-400 font-bold rounded text-[10px]">P</span>`;
@@ -1895,7 +2225,7 @@
                     <td class="p-3">${pathBadge}</td>
                     <td class="p-3 font-black text-indigo-600 dark:text-indigo-400">${s.kelas || '<span class="text-amber-500 font-normal italic">Belum Terbagi</span>'}</td>
                     <td class="p-3 text-center">
-                        <select onchange="transferSingleStudent(${s.id}, this.value)" class="lovelace-input px-2 py-1 text-[11px] bg-slate-100 dark:bg-slate-700 border border-transparent text-slate-700 dark:text-slate-300 outline-none appearance-none cursor-pointer">${optionsHtml}</select>
+                        <select onchange="transferSingleStudent('${s.id}', this.value)" class="lovelace-input px-2 py-1 text-[11px] bg-slate-100 dark:bg-slate-700 border border-transparent text-slate-700 dark:text-slate-300 outline-none appearance-none cursor-pointer">${optionsHtml}</select>
                     </td>
                 `;
                 tbody.appendChild(tr);
@@ -1909,7 +2239,7 @@
 
         function transferSingleStudent(studentId, targetClass) {
             if (!targetClass) return;
-            const student = students.find(s => Number(s.id) === Number(studentId));
+            const student = students.find(s => String(s.id) === String(studentId));
             if (!student) return;
 
             student.kelas = (targetClass === 'BELUM_TERBAGI') ? '' : targetClass;
@@ -1962,8 +2292,8 @@
 
                     let processedCount = 0;
                     checkedBoxes.forEach(cb => {
-                        const studentId = Number(cb.value);
-                        const student = students.find(s => s.id === studentId);
+                        const studentId = cb.value;
+                        const student = students.find(s => String(s.id) === String(studentId));
                         if (student) {
                             student.kelas = (targetClass === 'BELUM_TERBAGI') ? '' : targetClass;
                             processedCount++;
@@ -1999,7 +2329,7 @@
 
             if (classId) {
                 if (title) title.textContent = "Edit Rincian Kelas";
-                const c = classes.find(item => item.id === classId);
+                const c = classes.find(item => String(item.id) === String(classId));
                 if (idInput) idInput.value = c.id;
                 document.getElementById('cf_name').value = c.name;
                 document.getElementById('cf_capacity').value = c.capacity;
@@ -2021,7 +2351,7 @@
             const name = document.getElementById('cf_name').value.trim().toUpperCase();
             const capacity = Number(document.getElementById('cf_capacity').value);
 
-            const isDuplicate = classes.some(c => c.name === name && c.id !== Number(id));
+            const isDuplicate = classes.some(c => c.name === name && String(c.id) !== String(id));
             if (isDuplicate) {
                 Swal.fire('Nama Kelas Duplikat', `Kelas dengan nama ${name} sudah terdaftar di sistem.`, 'error');
                 return;
@@ -2031,7 +2361,7 @@
 
             let classObj;
             if (id) {
-                const index = classes.findIndex(c => c.id === Number(id));
+                const index = classes.findIndex(c => String(c.id) === String(id));
                 if (index > -1) {
                     const oldName = classes[index].name;
                     students.forEach(s => { if (s.kelas === oldName) s.kelas = name; });
@@ -2060,7 +2390,7 @@
         function editClass(id) { openClassModal(id); }
 
         function deleteClass(id) {
-            const c = classes.find(item => item.id === id);
+            const c = classes.find(item => String(item.id) === String(id));
             if (!c) return;
 
             const hasStudents = students.some(s => s.kelas === c.name);
@@ -2082,7 +2412,7 @@
                     const syncSuccess = await syncClassToSpreadsheet(c, true);
 
                     if (syncSuccess || SCRIPT_URL === 'URL_WEB_APP_ANDA_DISINI') {
-                        classes = classes.filter(item => item.id !== id);
+                        classes = classes.filter(item => String(item.id) !== String(id));
                         localStorage.setItem('kelas_sman1_bna_v2', JSON.stringify(classes));
                         Swal.fire({ icon: 'success', title: 'Rombel Dihapus', timer: 1000, showConfirmButton: false });
                         goToClassManagement();
@@ -2196,22 +2526,6 @@
                 document.body.removeChild(element); Swal.fire({ icon: 'success', title: 'Presensi Terunduh!', timer: 2000, showConfirmButton: false });
             });
         }, 600);
-    }
-    
-    function togglePasswordVisibility(inputId, iconId) {
-        const input = document.getElementById(inputId);
-        const icon = document.getElementById(iconId);
-        if (!input || !icon) return;
-
-        if (input.type === "password") {
-            input.type = "text";
-            icon.classList.remove("fa-eye");
-            icon.classList.add("fa-eye-slash");
-        } else {
-            input.type = "password";
-            icon.classList.remove("fa-eye-slash");
-            icon.classList.add("fa-eye");
-        }
     }
     </script>
 </body>
